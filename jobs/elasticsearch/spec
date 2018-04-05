@@ -22,3 +22,5 @@ properties:
   elasticsearch.exec.options:
     description: An array of additional options to pass when starting elasticsearch
     default: []
+  elasticsearch.heap_size:
+    description: sets jvm heap sized

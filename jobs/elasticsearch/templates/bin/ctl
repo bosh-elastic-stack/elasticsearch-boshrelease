@@ -48,10 +48,6 @@ case $1 in
     mkdir -p $RUN_DIR $LOG_DIR $STORE_DIR
 
     pid_guard $PIDFILE $JOB_NAME
-    pid_guard $PIDFILE-init $JOB_NAME-init
-
-    # lock while we update plugins and run drain
-    echo "$$" > "$PIDFILE-init"
 
     chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $STORE_DIR ${JOB_DIR}/config
 

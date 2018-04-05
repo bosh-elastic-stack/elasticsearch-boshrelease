@@ -1,0 +1,7 @@
+---
+name: elasticsearch
+
+dependencies: []
+
+files:
+- elasticsearch/elasticsearch-6.2.3.tar.gz 

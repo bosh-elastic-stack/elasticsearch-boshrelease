@@ -1,0 +1,31 @@
+---
+name: elasticsearch
+
+releases:
+- name: elasticsearch
+  version: latest
+
+stemcells:
+- os: ubuntu-trusty
+  alias: trusty
+  version: latest
+
+instance_groups:
+- name: elasticsearch
+  jobs:
+  - name: elasticsearch
+    release: elasticsearch
+    properties: {}
+  instances: 1
+  stemcell: trusty
+  azs: [z1]
+  vm_type: default
+  persistent_disk: 1024
+  networks:
+  - name: default
+
+update:
+  canaries: 1
+  max_in_flight: 3
+  canary_watch_time: 30000-600000
+  update_watch_time: 5000-600000

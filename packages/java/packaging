@@ -1,0 +1,9 @@
+set -e
+
+tar xfv java/openjdk-1.8.0_162.tar.gz
+cp -a ./* $BOSH_INSTALL_TARGET
+rm -rf $BOSH_INSTALL_TARGET/java
+rm -rf $BOSH_INSTALL_TARGET/demo
+rm -rf $BOSH_INSTALL_TARGET/sample
+rm -rf $BOSH_INSTALL_TARGET/man
+rm -rf $BOSH_INSTALL_TARGET/src.zip

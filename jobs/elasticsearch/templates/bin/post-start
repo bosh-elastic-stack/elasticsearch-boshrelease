@@ -1,0 +1,25 @@
+#!/bin/bash
+# Inspired by https://github.com/cloudfoundry/exemplar-release/blob/master/jobs/paragon/templates/post-start
+# If a command fails, exit immediately
+set -e
+
+export timeout=200
+export polling_frequency=1
+
+export max_attempts=$((timeout / polling_frequency))
+export attempts=0
+while [[ "$max_attempts" -ge "$attempts" ]]; do
+    set +e
+    echo "attempt $attempts"
+    curl -s -f --max-time $timeout http://127.0.0.1:9200/_cluster/health
+    if [[ $? -eq 0 ]]; then
+        exit 0
+    fi
+    set -e
+
+    attempts=$(($attempts + 1))
+
+    sleep "$polling_frequency"
+done
+
+exit 1

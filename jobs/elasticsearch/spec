@@ -1,0 +1,24 @@
+---
+name: elasticsearch
+
+templates:
+  bin/ctl: bin/ctl
+  bin/post-start: bin/post-start
+  config/elasticsearch.yml: config/elasticsearch.yml
+  config/jvm.options: config/jvm.options
+  config/log4j2.properties: config/log4j2.properties
+
+packages:
+- java
+- elasticsearch
+
+properties:
+  elasticsearch.log_level:
+    description: The default logging level (e.g. WARN, DEBUG, INFO)
+    default: INFO
+  elasticsearch.limits.fd:
+    description: Maximum file descriptors
+    default: 65536
+  elasticsearch.exec.options:
+    description: An array of additional options to pass when starting elasticsearch
+    default: []

@@ -4,6 +4,8 @@ RUN_DIR=/var/vcap/sys/run/elasticsearch
 LOG_DIR=/var/vcap/sys/log/elasticsearch
 STORE_DIR=/var/vcap/store/elasticsearch
 JOB_DIR=/var/vcap/jobs/elasticsearch
+TMP_DIR=/var/vcap/sys/tmp/elasticsearch
+
 PIDFILE=$RUN_DIR/elasticsearch.pid
 RUNAS=vcap
 
@@ -11,6 +13,14 @@ export JAVA_HOME=/var/vcap/packages/java
 export PATH=$PATH:$JAVA_HOME/bin
 
 export ES_PATH_CONF=${JOB_DIR}/config
+
+export HEAP_SIZE=$((( $( cat /proc/meminfo | grep MemTotal | awk '{ print $2 }' ) * 46 ) / 100 ))K
+
+<% if_p('elasticsearch.heap_size') do |heap_size| %>
+HEAP_SIZE=<%= heap_size %>
+<% end %>
+
+export ES_JAVA_OPTS="-Xms$HEAP_SIZE -Xmx$HEAP_SIZE -Djava.io.tmpdir=$TMP_DIR"
 
 function pid_is_running() {
   declare pid="$1"
@@ -41,11 +51,10 @@ function pid_guard() {
 case $1 in
 
   start)
-    mkdir -p $RUN_DIR $LOG_DIR $STORE_DIR
+    mkdir -p $RUN_DIR $LOG_DIR $STORE_DIR $TMP_DIR
+    chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $STORE_DIR $TMP_DIR ${JOB_DIR}/config
 
     pid_guard $PIDFILE $JOB_NAME
-
-    chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $STORE_DIR ${JOB_DIR}/config
 
     ulimit -n <%= p("elasticsearch.limits.fd") %>
     ulimit -l unlimited

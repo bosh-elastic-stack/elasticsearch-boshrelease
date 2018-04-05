@@ -16,10 +16,6 @@ export MAX_MAP_COUNT=262144
 
 export ES_PATH_CONF=${JOB_DIR}/config
 
-function pid_exists() {
-  ps -p $1 &> /dev/null
-}
-
 function pid_is_running() {
   declare pid="$1"
   ps -p "${pid}" >/dev/null 2>&1
@@ -80,7 +76,7 @@ case $1 in
 
   stop)
     PID=$(head -1 $PIDFILE)
-    if [ ! -z $PID ] && pid_exists $PID; then
+    if [ ! -z $PID ] && pid_is_running $PID; then
       kill $PID
     fi
     while [ -e /proc/$PID ]; do sleep 0.1; done

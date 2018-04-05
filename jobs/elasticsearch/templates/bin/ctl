@@ -10,10 +10,6 @@ RUNAS=vcap
 export JAVA_HOME=/var/vcap/packages/java
 export PATH=$PATH:$JAVA_HOME/bin
 
-export MAX_OPEN_FILES=<%= p("elasticsearch.limits.fd") %>
-export MAX_LOCKED_MEMORY=unlimited  # required to enable elasticsearch's mlockall setting
-export MAX_MAP_COUNT=262144
-
 export ES_PATH_CONF=${JOB_DIR}/config
 
 function pid_is_running() {
@@ -51,17 +47,9 @@ case $1 in
 
     chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $STORE_DIR ${JOB_DIR}/config
 
-    if [ -n "$MAX_OPEN_FILES" ]; then
-      ulimit -n $MAX_OPEN_FILES
-    fi
-
-    if [ -n "$MAX_LOCKED_MEMORY" ]; then
-      ulimit -l $MAX_LOCKED_MEMORY
-    fi
-
-    if [ -n "$MAX_MAP_COUNT" ]; then
-      sysctl -q -w vm.max_map_count=$MAX_MAP_COUNT
-    fi
+    ulimit -n <%= p("elasticsearch.limits.fd") %>
+    ulimit -l unlimited
+    sysctl -q -w vm.max_map_count=262144
 
     exec chpst -u $RUNAS:$RUNAS \
        /var/vcap/packages/elasticsearch/bin/elasticsearch \

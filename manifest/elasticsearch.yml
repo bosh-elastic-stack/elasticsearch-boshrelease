@@ -19,7 +19,7 @@ instance_groups:
   instances: 1
   stemcell: trusty
   azs: [z1]
-  vm_type: default
+  vm_type: small
   persistent_disk: 1024
   networks:
   - name: default

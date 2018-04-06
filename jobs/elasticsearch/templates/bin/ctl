@@ -32,8 +32,9 @@ case $1 in
 
     pid_guard $PIDFILE $JOB_NAME
 
-    ulimit -n <%= p("elasticsearch.limits.fd") %>
+    ulimit -n 65536
     ulimit -l unlimited
+    ulimit -u 4096
     sysctl -q -w vm.max_map_count=262144
 
     exec chpst -u $RUNAS:$RUNAS \

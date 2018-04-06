@@ -17,9 +17,6 @@ properties:
   elasticsearch.log_level:
     description: The default logging level (e.g. WARN, DEBUG, INFO)
     default: INFO
-  elasticsearch.limits.fd:
-    description: Maximum file descriptors
-    default: 65536
   elasticsearch.exec.options:
     description: An array of additional options to pass when starting elasticsearch
     default: []

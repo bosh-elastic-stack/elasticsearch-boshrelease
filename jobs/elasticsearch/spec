@@ -28,3 +28,9 @@ properties:
   elasticsearch.cluster_name:
     description: The name of the elastic search cluster
     default: "bosh_es"
+  elasticsearch.node.allow_master:
+    description: Allow node to become master? (true / false)
+    default: true
+  elasticsearch.node.allow_data:
+    description: Allow node to store data? (true / false)
+    default: true

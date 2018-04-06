@@ -8,11 +8,18 @@ export polling_frequency=1
 
 export max_attempts=$((timeout / polling_frequency))
 export attempts=0
+out=$(mktemp health-XXXXXX)
+
 while [[ "$max_attempts" -ge "$attempts" ]]; do
     set +e
     echo "attempt $attempts"
-    curl -s -f --max-time $timeout http://127.0.0.1:9200/_cluster/health
-    if [[ $? -eq 0 ]]; then
+    curl -s -f --max-time $timeout -sw '\n%{http_code}' http://127.0.0.1:9200/_cluster/health > ${out}
+    body=$(cat ${out} | head -n -1)
+    status=$(cat ${out} | tail -n 1)
+    echo "body: ${body}"
+    echo "status: ${status}"
+    if [[ "${status}" = "200" && `echo ${body} | python -c 'import json,sys;print json.load(sys.stdin)["status"]'` != "red" ]]; then
+        rm ${out}
         exit 0
     fi
     set -e
@@ -22,4 +29,5 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
     sleep "$polling_frequency"
 done
 
+rm ${out}
 exit 1

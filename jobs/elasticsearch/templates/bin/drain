@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+<% if p('elasticsearch.node.allow_data') %>
+# disable allocations before bringing down data nodes
+# https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
+curl -s -X PUT -H 'Content-Type: application/json' http://127.0.0.1:9200/_all/_settings \
+  -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "5m"}}' \
+  > /dev/null
+<% end %>
+
+return_code=$?
+echo 0
+exit ${return_code}

@@ -24,3 +24,9 @@ properties:
     default: []
   elasticsearch.heap_size:
     description: sets jvm heap sized
+  elasticsearch.jvm_options:
+    description: Additional Java Virtual Machine options
+    default: []
+  elasticsearch.cluster_name:
+    description: The name of the elastic search cluster
+    default: "bosh_es"

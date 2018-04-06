@@ -20,6 +20,11 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
     echo "status: ${status}"
     if [[ "${status}" = "200" && `echo ${body} | python -c 'import json,sys;print json.load(sys.stdin)["status"]'` != "red" ]]; then
         rm ${out}
+        # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
+        <% if p("elasticsearch.node.allow_data") %>
+        curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_all/_settings \
+          -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "1m"}}'
+        <% end %>
         exit 0
     fi
     set -e

@@ -12,7 +12,7 @@
     sha1: 70a21f53d1f89d25847280d5c4fad25293cb0af9
 
 - type: replace
-  path: /instance_groups/name=elasticsearch/jobs/-
+  path: /instance_groups/name=elasticsearch-master/jobs/-
   value:
     name: nginx
     release: nginx

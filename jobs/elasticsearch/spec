@@ -14,6 +14,17 @@ packages:
 - java
 - elasticsearch
 
+provides:
+- name: elasticsearch
+  type: elasticsearch
+  properties:
+  - elasticsearch.cluster_name
+
+consumes:
+- name: elasticsearch
+  type: elasticsearch
+  optional: true
+
 properties:
   elasticsearch.log_level:
     description: The default logging level (e.g. WARN, DEBUG, INFO)
@@ -35,3 +46,6 @@ properties:
   elasticsearch.node.allow_data:
     description: Allow node to store data? (true / false)
     default: true
+  elasticsearch.discovery.minimum_master_nodes:
+    description: The minimum number of master eligible nodes a node should "see" in order to operate within the cluster. Recommended to set it to a higher value than 1 when running more than 2 nodes in the cluster.
+    default: "auto"

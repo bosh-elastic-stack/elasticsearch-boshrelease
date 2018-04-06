@@ -2,13 +2,13 @@
 # bosh -d elasticsearch deploy manifest/elasticsearch.yml -o manifest/add-public-ip.yml -v external_ip=${EXTERNAL_IP} --no-redact
 
 - type: replace
-  path: /instance_groups/name=elasticsearch/networks/name=default/default?
+  path: /instance_groups/name=elasticsearch-master/networks/name=default/default?
   value:
   - dns
   - gateway
 
 - type: replace
-  path: /instance_groups/name=elasticsearch/networks/-
+  path: /instance_groups/name=elasticsearch-master/networks/-
   value: 
     name: public
     static_ips:

@@ -11,14 +11,24 @@ stemcells:
   version: latest
 
 instance_groups:
-- name: elasticsearch
+- name: elasticsearch-master
   jobs:
   - name: elasticsearch
     release: elasticsearch
-    properties: {}
+    properties:
+      elasticsearch:
+        node:
+          allow_master: true
+          allow_data: true
   instances: 1
   stemcell: trusty
-  azs: [z1]
+  update:
+    max_in_flight: 1
+    serial: true
+  azs:
+  - z1
+  - z2
+  - z3
   vm_type: small
   persistent_disk: 1024
   networks:

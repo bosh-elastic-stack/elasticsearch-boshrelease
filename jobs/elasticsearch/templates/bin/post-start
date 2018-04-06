@@ -13,12 +13,16 @@ out=$(mktemp health-XXXXXX)
 while [[ "$max_attempts" -ge "$attempts" ]]; do
     set +e
     echo "attempt $attempts"
+    <% if p("elasticsearch.node.allow_data") and not p("elasticsearch.node.allow_master") %>
     curl -s -f --max-time $timeout -sw '\n%{http_code}' http://127.0.0.1:9200/_cluster/health > ${out}
+    <% else %>
+    curl -s -f --max-time $timeout -sw '\n%{http_code}' http://127.0.0.1:9200/_cluster/health?local=true > ${out}
+    <% end %>
     body=$(cat ${out} | head -n -1)
     status=$(cat ${out} | tail -n 1)
     echo "body: ${body}"
     echo "status: ${status}"
-    if [[ "${status}" = "200" && `echo ${body} | python -c 'import json,sys;print json.load(sys.stdin)["status"]'` != "red" ]]; then
+    if [[ "${status}" = "200" && `echo ${body} | python -c 'import json,sys;print json.load(sys.stdin)["status"]'` = "green" ]]; then
         rm ${out}
         # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
         <% if p("elasticsearch.node.allow_data") %>

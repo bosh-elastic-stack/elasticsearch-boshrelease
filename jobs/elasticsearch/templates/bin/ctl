@@ -9,6 +9,8 @@ TMP_DIR=/var/vcap/sys/tmp/elasticsearch
 PIDFILE=$RUN_DIR/elasticsearch.pid
 RUNAS=vcap
 
+source $JOB_DIR/bin/ctl_utils.sh
+
 export JAVA_HOME=/var/vcap/packages/java
 export PATH=$PATH:$JAVA_HOME/bin
 
@@ -21,32 +23,6 @@ HEAP_SIZE=<%= heap_size %>
 <% end %>
 
 export ES_JAVA_OPTS="-Xms$HEAP_SIZE -Xmx$HEAP_SIZE -Djava.io.tmpdir=$TMP_DIR"
-
-function pid_is_running() {
-  declare pid="$1"
-  ps -p "${pid}" >/dev/null 2>&1
-}
-
-function pid_guard() {
-  declare pidfile="$1" name="$2"
-
-  echo "------------ STARTING $(basename "$0") at $(date) --------------" | tee /dev/stderr
-
-  if [ ! -f "${pidfile}" ]; then
-    return 0
-  fi
-
-  local pid
-  pid=$(head -1 "${pidfile}")
-
-  if pid_is_running "${pid}"; then
-    echo "${name} is already running, please stop it first"
-    exit 1
-  fi
-
-  echo "Removing stale pidfile"
-  rm "${pidfile}"
-}
 
 case $1 in
 
@@ -68,15 +44,10 @@ case $1 in
     ;;
 
   stop)
-    PID=$(head -1 $PIDFILE)
-    if [ ! -z $PID ] && pid_is_running $PID; then
-      kill $PID
-    fi
-    while [ -e /proc/$PID ]; do sleep 0.1; done
-    rm -f $PIDFILE
+    kill_and_wait $PIDFILE
     ;;
 
   *)
-  echo "Usage: ctl {start|stop|console}" ;;
+  echo "Usage: ctl {start|stop}" ;;
 esac
 exit 0

@@ -4,6 +4,7 @@ name: elasticsearch
 templates:
   bin/ctl: bin/ctl
   bin/post-start: bin/post-start
+  bin/ctl_utils.sh: bin/ctl_utils.sh
   config/elasticsearch.yml: config/elasticsearch.yml
   config/jvm.options: config/jvm.options
   config/log4j2.properties: config/log4j2.properties

@@ -1,0 +1,312 @@
+---
+resources:
+- name: repo
+  type: git
+  source:
+    uri: git@github.com:making/elasticsearch-boshrelease.git
+    branch: master
+    private_key: ((github-private-key))
+    ignore_paths:
+    - ci/*
+    - manifest/*
+    - README.md
+- name: repo-version
+  type: semver
+  source:
+    uri: git@github.com:making/elasticsearch-boshrelease.git
+    branch: version
+    private_key: ((github-private-key))
+    file: version
+    driver: git
+- name: gh-release
+  type: github-release
+  source:
+    user: making
+    repository: elasticsearch-boshrelease
+    access_token: ((github-access-token))
+
+jobs:
+- name: bosh-deploy-dev-in-docker
+  serial: true
+  plan:
+  - aggregate:
+    - get: repo
+      # trigger: true
+  - task: download-blobs
+    config:
+      <<: *DOWNLOAD_BLOBS
+  - task: bosh-create-release
+    config:
+      <<: *BOSH_CREATE_RELEASE
+  - task: bosh-deploy
+    privileged: true
+    params:
+      RELEASE_NAME: elasticsearch
+      IS_DOCKER: true
+    config:
+      <<: *BOSH_DEPLOY
+- name: bosh-deploy-dev-in-exsiting-env
+  serial: true
+  plan:
+  - aggregate:
+    - get: repo
+      trigger: true
+  - task: download-blobs
+    config:
+      <<: *DOWNLOAD_BLOBS
+  - task: bosh-create-release
+    config:
+      <<: *BOSH_CREATE_RELEASE
+  - task: bosh-deploy
+    params:
+      RELEASE_NAME: elasticsearch
+      IS_DOCKER: false
+      <<: *BOSH
+    config:
+      <<: *BOSH_DEPLOY
+- name: ship-it
+  serial: true
+  plan:
+  - aggregate:
+    - get: repo
+      # passed:
+      # - bosh-deploy-dev-in-exsiting-env
+      # - bosh-deploy-dev-in-docker
+    - get: repo-version
+  - task: download-blobs
+    config:
+      <<: *DOWNLOAD_BLOBS
+  - task: create-release
+    params:
+      <<: *BOSH
+      GIT_EMAIL: ((git-email))
+      GIT_NAME: ((git-name))
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: bosh/main-bosh-docker
+      inputs:
+      - name: repo
+      - name: repo-version
+      - name: compiled
+      outputs:
+      - name: releases
+      - name: updated-repo
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -e
+          cd repo
+          shopt -s dotglob
+          cp -r ./* ../updated-repo
+          rm -rf .final_builds releases
+          VERSION=`cat ../repo-version/number`
+          TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
+          bosh add-blob ../compiled/java/openjdk-1.8.0_162.tar.gz java/openjdk-1.8.0_162.tar.gz
+          bosh add-blob ../compiled/elasticsearch/elasticsearch-6.2.3.tar.gz elasticsearch/elasticsearch-6.2.3.tar.gz
+          bosh create-release --force --version=${VERSION} --final --tarball=../releases/${TARBALL}
+          SHA1=`sha1sum ../releases/${TARBALL} | awk '{print $1}'`
+          mkdir -p .sha1
+          echo ${SHA1} > .sha1/${VERSION}
+          cp -r ./* ../updated-repo
+          cd ../updated-repo
+          git config --global user.email "${GIT_EMAIL}"
+          git config --global user.name "${GIT_NAME}"
+          git add -A
+          git commit -m "Release ${VERSION}"
+          # Release Note
+          cat <<EOF > ../releases/note.md
+          ## Deployment
+          \`\`\` yaml
+          # manifest.yml
+          ---
+          name: elasticsearch
+          releases:
+          - name: elasticsearch
+            version: ${VERSION}
+            url: https://github.com/making/elasticsearch-boshrelease/releases/download/${VERSION}/${TARBALL}
+            sha1: ${SHA1}
+          \`\`\`
+          EOF
+  - put: repo
+    params:
+      repository: updated-repo
+      tag: repo-version/number
+  - put: gh-release
+    params:
+      name: repo-version/number
+      tag: repo-version/number
+      body: releases/note.md
+      globs:
+      - releases/*.tgz
+
+########################################
+
+- name: bump-to-next-patch-version
+  plan:
+  - aggregate:
+    - get: repo
+      trigger: true
+      passed:
+      - ship-it
+    - get: repo-version
+      params:
+        bump: patch
+  - put: repo-version
+    params:
+      file: repo-version/number
+
+- name: bump-to-next-minor-version
+  plan:
+  - aggregate:
+    - get: repo-version
+      params:
+        bump: minor
+  - put: repo-version
+    params:
+      file: repo-version/number
+
+- name: bump-to-next-majar-version
+  plan:
+  - aggregate:
+    - get: repo-version
+      params:
+        bump: majar
+  - put: repo-version
+    params:
+      file: repo-version/number
+
+params:
+  bosh: &BOSH
+    BOSH_CLIENT: ((bosh-client))
+    BOSH_ENVIRONMENT: ((bosh-environment))
+    BOSH_CLIENT_SECRET: ((bosh-client-secret))
+    BOSH_CA_CERT: ((bosh-ca-cert))
+tasks:
+  download-blobs: &DOWNLOAD_BLOBS
+    platform: linux
+    image_resource:
+      type: docker-image
+      source:
+        repository: bosh/main-bosh-docker
+    inputs:
+    - name: repo
+    outputs:
+    - name: compiled
+    caches:
+    - path: repo/blobs
+    - path: repo/.download
+    run:
+      path: bash
+      args: 
+      - -c
+      - |
+        set -e
+        cd repo
+        ./add-blobs.sh
+        cp -ra blobs/* ../compiled/
+        find ../compiled  
+  bosh-create-release: &BOSH_CREATE_RELEASE
+    platform: linux
+    image_resource:
+      type: docker-image
+      source:
+        repository: bosh/main-bosh-docker
+    inputs:
+    - name: repo
+    - name: compiled
+    outputs:
+    - name: releases
+    run:
+      path: bash
+      args: 
+      - -c
+      - |
+        set -e
+        cd repo
+        bosh add-blob ../compiled/java/openjdk-1.8.0_162.tar.gz java/openjdk-1.8.0_162.tar.gz
+        bosh add-blob ../compiled/elasticsearch/elasticsearch-6.2.3.tar.gz elasticsearch/elasticsearch-6.2.3.tar.gz
+        rm -rf .final_builds releases
+        bosh create-release --name=elasticsearch-dev --force --timestamp-version --tarball=../releases/elasticsearch-boshrelease.tgz
+  bosh-deploy: &BOSH_DEPLOY
+    platform: linux
+    image_resource:
+      type: docker-image
+      source:
+        repository: bosh/main-bosh-docker
+    inputs:
+    - name: repo
+    - name: releases
+    caches:
+    - path: repo/.bosh
+    run:
+      path: bash
+      args: 
+      - -c
+      - |
+        set -e
+        echo "======"
+        VM_TYPE=small
+        if [ "${IS_DOCKER}" == "true" ];then
+          echo "Starting bosh..."
+          rm -rf ~/.bosh
+          ln -fs $(pwd)/repo/.bosh ~/.bosh
+          start-bosh
+          source /tmp/local-bosh/director/env
+          VM_TYPE=default
+          bosh upload-stemcell https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=3468.21
+        fi
+        bosh env
+        bosh upload-release releases/*.tgz
+        cd repo
+        cat <<EOF > ops.yml
+        - type: remove
+          path: /instance_groups/name=${RELEASE_NAME}-dev-master/networks/0/static_ips?
+        - type: replace
+          path: /instance_groups/name=${RELEASE_NAME}-dev-master/vm_type
+          value: ${VM_TYPE}
+        - type: replace
+          path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/heap_size?
+          value: 768m
+        EOF
+        sed -i "s/name: ${RELEASE_NAME}/name: ${RELEASE_NAME}-dev/" manifest/elasticsearch.yml
+        sed -i "s/release: ${RELEASE_NAME}/release: ${RELEASE_NAME}-dev/" manifest/elasticsearch.yml
+        sed -i "s/  - name: elasticsearch-dev/  - name: elasticsearch/" manifest/elasticsearch.yml
+
+        sed -i "s/name: ${RELEASE_NAME}/name: ${RELEASE_NAME}-dev/" manifest/add-data-nodes.yml
+        sed -i "s/release: ${RELEASE_NAME}/release: ${RELEASE_NAME}-dev/" manifest/add-data-nodes.yml
+        sed -i "s|/instance_groups/name=${RELEASE_NAME}|/instance_groups/name=${RELEASE_NAME}-dev|" manifest/add-data-nodes.yml
+        sed -i "s/    - name: elasticsearch-dev/    - name: elasticsearch/" manifest/add-data-nodes.yml
+
+        cat manifest/elasticsearch.yml
+        cat manifest/add-data-nodes.yml
+        echo
+        echo "Deploying..."
+
+        bosh -n deploy -d ${RELEASE_NAME}-dev \
+             manifest/elasticsearch.yml \
+             -o ops.yml \
+             --vars-store=creds.yml \
+             --no-redact
+        bosh instances --ps -d ${RELEASE_NAME}-dev
+        ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME} | awk '{print $4}'`
+        echo ${ip}
+        bosh -n deploy -d ${RELEASE_NAME}-dev \
+             manifest/elasticsearch.yml \
+             -o ops.yml \
+             -o manifest/add-data-nodes.yml \
+             -o <(cat <<EOF
+        - type: replace
+          path: /instance_groups/name=${RELEASE_NAME}-dev-data/jobs/name=elasticsearch/properties/elasticsearch/heap_size?
+          value: 768m
+        EOF) \
+             --vars-store=creds.yml \
+             -v data_nodes_instances=2 \
+             --no-redact
+        bosh instances --ps -d ${RELEASE_NAME}-dev
+        bosh -n delete-deployment -d ${RELEASE_NAME}-dev
+        bosh -n clean-up --all

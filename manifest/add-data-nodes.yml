@@ -1,5 +1,5 @@
 # EXTERNAL_IP=
-# bosh -d elasticsearch deploy manifest/elasticsearch.yml -o manifest/add-public-ip.yml -o manifest/support-https.yml -o manifest/add-data-nodes.yml -v external_ip=${EXTERNAL_IP} -v data_nodes_instances=1 --var-file nginx.certificate=${HOME}/gdrive/sslip.io/sslip.io.crt --var-file nginx.private_key=${HOME}/gdrive/sslip.io/sslip.io.key --no-redact
+# bosh -d elasticsearch deploy manifest/elasticsearch.yml -o manifest/add-azure-public-ip.yml -o manifest/support-https.yml -o manifest/add-data-nodes.yml -v external_ip=${EXTERNAL_IP} -v data_nodes_instances=1 --var-file nginx.certificate=${HOME}/gdrive/sslip.io/sslip.io.crt --var-file nginx.private_key=${HOME}/gdrive/sslip.io/sslip.io.key --no-redact
 
 
 - type: replace

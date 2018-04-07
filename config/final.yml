@@ -1,1 +1,5 @@
-name: elasticsearch-boshrelease
+name: elasticsearch
+blobstore:
+  provider: local
+  options:
+    blobstore_path: /tmp/elasticsearch

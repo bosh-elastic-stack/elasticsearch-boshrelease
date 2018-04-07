@@ -94,6 +94,7 @@ path.data: /var/vcap/store/elasticsearch
 node.name: <%= name %>/<%= index %>
 node.master: <%= p("elasticsearch.node.allow_master") %>
 node.data: <%= p("elasticsearch.node.allow_data") %>
+node.ingest: <%= p("elasticsearch.node.allow_ingest") %>
 
 <%
   cluster_name = nil

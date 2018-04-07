@@ -22,7 +22,7 @@ export HEAP_SIZE=$((( $( cat /proc/meminfo | grep MemTotal | awk '{ print $2 }' 
 HEAP_SIZE=<%= heap_size %>
 <% end %>
 
-export ES_JAVA_OPTS="-Xms$HEAP_SIZE -Xmx$HEAP_SIZE"
+export ES_JAVA_OPTS="-Djava.net.preferIPv4Stack=true -Xms$HEAP_SIZE -Xmx$HEAP_SIZE"
 export ES_TMPDIR=$TMP_DIR
 
 case $1 in

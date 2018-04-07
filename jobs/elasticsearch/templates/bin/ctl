@@ -31,7 +31,7 @@ case $1 in
     mkdir -p $RUN_DIR $LOG_DIR $STORE_DIR $TMP_DIR
     chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $STORE_DIR $TMP_DIR ${JOB_DIR}/config
 
-    pid_guard $PIDFILE $JOB_NAME
+    pid_guard $PIDFILE elasticsearch
 
     ulimit -n 65536
     ulimit -l unlimited

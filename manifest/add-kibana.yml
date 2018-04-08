@@ -1,0 +1,21 @@
+# EXTERNAL_IP=
+# bosh -d elasticsearch deploy manifest/elasticsearch.yml -o manifest/add-azure-public-ip.yml -o manifest/add-kibana.yml -o manifest/support-https.yml -o manifest/support-https-for-kibana.yml -v external_ip=${EXTERNAL_IP} --no-redact
+# bosh -d elasticsearch deploy manifest/elasticsearch.yml -o manifest/add-azure-public-ip.yml -o manifest/add-kibana.yml -o manifest/support-https.yml -o manifest/support-https-for-kibana.yml -v external_ip=${EXTERNAL_IP} --var-file nginx.certificate=${HOME}/gdrive/sslip.io/sslip.io.crt --var-file nginx.private_key=${HOME}/gdrive/sslip.io/sslip.io.key --no-redact
+
+- type: replace
+  path: /releases/-
+  value:
+    name: kibana
+    version: 0.0.1
+    url: https://github.com/making/kibana-boshrelease/releases/download/0.0.1/kibana-boshrelease-0.0.1.tgz
+    sha1: a7dc2ed72d0c00975ce24a73e5c6fd44f5465317
+
+
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/-
+  value:
+    name: kibana
+    release: kibana
+    properties:
+      kibana:
+        memory_limit: 30

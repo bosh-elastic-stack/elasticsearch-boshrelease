@@ -22,7 +22,7 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
     status=$(cat ${out} | tail -n 1)
     echo "body: ${body}"
     echo "status: ${status}"
-    if [[ "${status}" = "200" && `echo ${body} | python -c 'import json,sys;print json.load(sys.stdin)["status"]'` = "green" ]]; then
+    if [[ "${status}" = "200" && `echo ${body} | python -c 'import json,sys;print json.load(sys.stdin)["status"]'` != "red" ]]; then
         rm ${out}
         # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
         <% if p("elasticsearch.node.allow_data") %>

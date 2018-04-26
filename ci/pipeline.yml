@@ -107,7 +107,7 @@ jobs:
           VERSION=`cat ../repo-version/number`
           TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
           bosh add-blob ../compiled/java/openjdk-1.8.0_162.tar.gz java/openjdk-1.8.0_162.tar.gz
-          bosh add-blob ../compiled/elasticsearch/elasticsearch-6.2.3.tar.gz elasticsearch/elasticsearch-6.2.3.tar.gz
+          bosh add-blob ../compiled/elasticsearch/elasticsearch-6.2.4.tar.gz elasticsearch/elasticsearch-6.2.4.tar.gz
           bosh create-release --force --version=${VERSION} --final --tarball=../releases/${TARBALL}
           SHA1=`sha1sum ../releases/${TARBALL} | awk '{print $1}'`
           mkdir -p .sha1
@@ -229,7 +229,7 @@ tasks:
         set -e
         cd repo
         bosh add-blob ../compiled/java/openjdk-1.8.0_162.tar.gz java/openjdk-1.8.0_162.tar.gz
-        bosh add-blob ../compiled/elasticsearch/elasticsearch-6.2.3.tar.gz elasticsearch/elasticsearch-6.2.3.tar.gz
+        bosh add-blob ../compiled/elasticsearch/elasticsearch-6.2.4.tar.gz elasticsearch/elasticsearch-6.2.4.tar.gz
         rm -rf .final_builds releases
         bosh create-release --name=elasticsearch-dev --force --timestamp-version --tarball=../releases/elasticsearch-boshrelease.tgz
   bosh-deploy: &BOSH_DEPLOY

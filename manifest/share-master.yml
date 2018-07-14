@@ -1,0 +1,6 @@
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/provides?
+  value:
+    elasticsearch:
+      as: elasticsearch-master
+      shared: true

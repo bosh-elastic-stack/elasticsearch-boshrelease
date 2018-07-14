@@ -8,7 +8,7 @@ resources:
     private_key: ((github-private-key))
     ignore_paths:
     - ci/*
-    - manifest/*
+    # - manifest/*
     - README.md
 - name: repo-version
   type: semver
@@ -250,7 +250,6 @@ tasks:
       - |
         set -e
         echo "======"
-        VM_TYPE=small
         if [ "${IS_DOCKER}" == "true" ];then
           echo "Starting bosh..."
           rm -rf ~/.bosh
@@ -267,9 +266,6 @@ tasks:
         - type: remove
           path: /instance_groups/name=${RELEASE_NAME}-dev-master/networks/0/static_ips?
         - type: replace
-          path: /instance_groups/name=${RELEASE_NAME}-dev-master/vm_type
-          value: ${VM_TYPE}
-        - type: replace
           path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/heap_size?
           value: 768m
         EOF
@@ -277,36 +273,78 @@ tasks:
         sed -i "s/release: ${RELEASE_NAME}/release: ${RELEASE_NAME}-dev/" manifest/elasticsearch.yml
         sed -i "s/  - name: elasticsearch-dev/  - name: elasticsearch/" manifest/elasticsearch.yml
 
-        sed -i "s/name: ${RELEASE_NAME}/name: ${RELEASE_NAME}-dev/" manifest/add-data-nodes.yml
-        sed -i "s/release: ${RELEASE_NAME}/release: ${RELEASE_NAME}-dev/" manifest/add-data-nodes.yml
-        sed -i "s|/instance_groups/name=${RELEASE_NAME}|/instance_groups/name=${RELEASE_NAME}-dev|" manifest/add-data-nodes.yml
-        sed -i "s/    - name: elasticsearch-dev/    - name: elasticsearch/" manifest/add-data-nodes.yml
+        for f in "add-data-nodes" "master-types" "master-instances" "support-https" "set-minimum-master-nodes-one";do
+          sed -i "s/name: ${RELEASE_NAME}/name: ${RELEASE_NAME}-dev/" manifest/$f.yml
+          sed -i "s/release: ${RELEASE_NAME}/release: ${RELEASE_NAME}-dev/" manifest/$f.yml
+          sed -i "s/from: ${RELEASE_NAME}-master/from: ${RELEASE_NAME}-master-dev/" manifest/$f.yml
+          sed -i "s/as: ${RELEASE_NAME}-master/as: ${RELEASE_NAME}-master-dev/" manifest/$f.yml
+          sed -i "s|/instance_groups/name=${RELEASE_NAME}|/instance_groups/name=${RELEASE_NAME}-dev|" manifest/$f.yml
+          sed -i "s/    - name: elasticsearch-dev/    - name: elasticsearch/" manifest/$f.yml
+        done
 
-        cat manifest/elasticsearch.yml
-        cat manifest/add-data-nodes.yml
-        echo
-        echo "Deploying..."
-
+        echo "Deploying a single elasticsearch..."
         bosh -n deploy -d ${RELEASE_NAME}-dev \
              manifest/elasticsearch.yml \
+             -o manifest/master-types.yml \
+             -v master_nodes_disk_type=default \
+             -v master_nodes_vm_type=small \
              -o ops.yml \
              --vars-store=creds.yml \
              --no-redact
         bosh instances --ps -d ${RELEASE_NAME}-dev
         ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME} | awk '{print $4}'`
         echo ${ip}
+        curl -v http://${ip}:9200/_cluster/health
+        echo
+        echo "Enabliing HTTPS..."
+        bosh -n deploy -d ${RELEASE_NAME}-dev \
+             manifest/elasticsearch.yml \
+             -o manifest/master-types.yml \
+             -o manifest/support-https.yml \
+             -v master_nodes_disk_type=default \
+             -v master_nodes_vm_type=small \
+             -v external_ip=${ip} \
+             -o ops.yml \
+             --vars-store=creds.yml \
+             --no-redact
+        bosh instances --ps -d ${RELEASE_NAME}-dev
+        ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME} | awk '{print $4}'`
+        echo ${ip}
+        bosh int creds.yml --path /nginx/ca > ca.pem
+        curl -v --cacert ca.pem https://$(echo ${ip} | tr '.' '-').sslip.io:443/_cluster/health
+
+        echo
+        echo "Deleting the elasticsearch"
+        bosh -d ${RELEASE_NAME}-dev -n delete-deployment --force
+        echo
+        echo "Deploying a elasticsearch cluster..."
         bosh -n deploy -d ${RELEASE_NAME}-dev \
              manifest/elasticsearch.yml \
              -o ops.yml \
+             -o manifest/master-types.yml \
+             -o manifest/master-instances.yml \
              -o manifest/add-data-nodes.yml \
+             -o manifest/set-minimum-master-nodes-one.yml \
              -o <(cat <<EOF
         - type: replace
           path: /instance_groups/name=${RELEASE_NAME}-dev-data/jobs/name=elasticsearch/properties/elasticsearch/heap_size?
           value: 768m
         EOF) \
              --vars-store=creds.yml \
+             -v master_nodes_disk_type=default \
+             -v master_nodes_instances=3 \
+             -v master_nodes_vm_type=small \
+             -v data_nodes_disk_type="1024" \
              -v data_nodes_instances=2 \
+             -v data_nodes_vm_type=small \
+             -v data_nodes_azs="[z1,z2,z3]" \
+             -v data_nodes_disk_type=default \
              --no-redact
         bosh instances --ps -d ${RELEASE_NAME}-dev
-        bosh -n delete-deployment -d ${RELEASE_NAME}-dev
-        bosh -n clean-up --all
+        ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME} | awk 'NR == 1 {print $4}'`
+        echo ${ip}
+        curl -v http://${ip}:9200/_cluster/health
+
+
+        # bosh -n delete-deployment -d ${RELEASE_NAME}-dev
+        # bosh -n clean-up --all

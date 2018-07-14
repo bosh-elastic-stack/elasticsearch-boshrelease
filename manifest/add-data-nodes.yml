@@ -37,7 +37,7 @@
       max_in_flight: 1
       serial: true
     azs: ((data_nodes_azs))
-    vm_type: ((data_nodes_vm_types))
+    vm_type: ((data_nodes_vm_type))
     persistent_disk_type: ((data_nodes_disk_type))
     networks:
     - name: default

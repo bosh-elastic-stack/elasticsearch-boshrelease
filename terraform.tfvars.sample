@@ -1,0 +1,6 @@
+prefix             = "changeme"
+access_key         = "changeme"
+secret_key         = "changeme"
+region             = "ap-northeast-1"
+elb_subnet_ids     = ["subnet-xxxxxxxxxx","subnet-yyyyyyyyyyy","subnet-zzzzzzzzzzz"]
+vpc_id             = "changeme"

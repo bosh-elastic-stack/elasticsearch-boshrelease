@@ -36,11 +36,8 @@
     update:
       max_in_flight: 1
       serial: true
-    azs:
-    - z1
-    - z2
-    - z3
-    vm_type: small
-    persistent_disk: 1024
+    azs: ((data_nodes_azs))
+    vm_type: ((data_nodes_vm_types))
+    persistent_disk_type: ((data_nodes_disk_type))
     networks:
     - name: default

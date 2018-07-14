@@ -1,0 +1,20 @@
+name: elasticsearch
+version: 0.2.0
+commit_hash: 109f790
+uncommitted_changes: true
+jobs:
+- name: elasticsearch
+  version: c22fa7b91b7e9ccd04e305bd80c3e51cb7709f7e
+  fingerprint: c22fa7b91b7e9ccd04e305bd80c3e51cb7709f7e
+  sha1: 71a3bd8bb5da0a8e1bc6040b6691833dff15924c
+packages:
+- name: elasticsearch
+  version: a613a0a415879398eebf558ea7f62e3adacb4ee5
+  fingerprint: a613a0a415879398eebf558ea7f62e3adacb4ee5
+  sha1: 64ff216c99e282441e1436fa34f703f4df0dec26
+  dependencies: []
+- name: java
+  version: d010ecc4c61517c102b5a90c3516563b1dafd5b4
+  fingerprint: d010ecc4c61517c102b5a90c3516563b1dafd5b4
+  sha1: 7bd2d16971453c68d917f1cd1212ec427fbe412b
+  dependencies: []

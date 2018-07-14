@@ -72,3 +72,4 @@
       alternative_names:
       - ((external_ip))
       - "*.sslip.io"
+      - "*.elasticsearch-master.default.elasticsearch.bosh"

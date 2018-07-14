@@ -341,10 +341,41 @@ tasks:
              -v data_nodes_disk_type=default \
              --no-redact
         bosh instances --ps -d ${RELEASE_NAME}-dev
-        ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME} | awk 'NR == 1 {print $4}'`
+        ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME}-dev-master | awk 'NR == 1 {print $4}'`
         echo ${ip}
         curl -v http://${ip}:9200/_cluster/health
+        echo
 
+        echo
+        echo "Enabliing HTTPS..."
+        bosh -n deploy -d ${RELEASE_NAME}-dev \
+             manifest/elasticsearch.yml \
+             -o ops.yml \
+             -o manifest/master-types.yml \
+             -o manifest/master-instances.yml \
+             -o manifest/support-https.yml \
+             -o manifest/add-data-nodes.yml \
+             -v external_ip=${ip} \
+             -o <(cat <<EOF
+        - type: replace
+          path: /instance_groups/name=${RELEASE_NAME}-dev-data/jobs/name=elasticsearch/properties/elasticsearch/heap_size?
+          value: 768m
+        EOF) \
+             --vars-store=creds.yml \
+             -v master_nodes_disk_type=default \
+             -v master_nodes_instances=3 \
+             -v master_nodes_vm_type=small \
+             -v data_nodes_disk_type="1024" \
+             -v data_nodes_instances=2 \
+             -v data_nodes_vm_type=small \
+             -v data_nodes_azs="[z1,z2,z3]" \
+             -v data_nodes_disk_type=default \
+             --no-redact
+        bosh instances --ps -d ${RELEASE_NAME}-dev
+        ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME}-dev-master | awk 'NR == 1 {print $4}'`
+        echo ${ip}
+        bosh int creds.yml --path /nginx/ca > ca.pem
+        curl -v --cacert ca.pem https://$(echo ${ip} | tr '.' '-').sslip.io:443/_cluster/health
 
-        # bosh -n delete-deployment -d ${RELEASE_NAME}-dev
-        # bosh -n clean-up --all
+        bosh -n delete-deployment -d ${RELEASE_NAME}-dev
+        bosh -n clean-up --all

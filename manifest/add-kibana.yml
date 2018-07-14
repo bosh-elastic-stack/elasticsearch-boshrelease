@@ -6,9 +6,9 @@
   path: /releases/-
   value:
     name: kibana
-    version: 0.0.1
-    url: https://github.com/making/kibana-boshrelease/releases/download/0.0.1/kibana-boshrelease-0.0.1.tgz
-    sha1: a7dc2ed72d0c00975ce24a73e5c6fd44f5465317
+    version: 0.1.0
+    url: https://github.com/making/kibana-boshrelease/releases/download/0.1.0/kibana-boshrelease-0.1.0.tgz
+    sha1: d47a34f51879d6686f055dcb105cd50d958f0f38
 
 
 - type: replace

@@ -22,15 +22,20 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
     status=$(cat ${out} | tail -n 1)
     echo "body: ${body}"
     echo "status: ${status}"
+    <% if p("elasticsearch.node.allow_data") and not p("elasticsearch.node.allow_master") %>
     if [[ "${status}" = "200" && `echo ${body} | python -c 'import json,sys;print json.load(sys.stdin)["status"]'` != "red" ]]; then
         rm ${out}
         # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
-        <% if p("elasticsearch.node.allow_data") %>
         curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_all/_settings \
           -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "1m"}}'
-        <% end %>
         exit 0
     fi
+    <% else %>
+    if [[ "${status}" = "200" ]]; then
+        rm ${out}
+        exit 0
+    fi
+    <% end %>
     set -e
 
     attempts=$(($attempts + 1))

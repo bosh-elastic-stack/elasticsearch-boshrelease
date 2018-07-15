@@ -1,0 +1,9 @@
+---
+name: elasticsearch-plugins
+
+templates: {}
+
+packages:
+- elasticsearch-plugins
+
+properties: {}

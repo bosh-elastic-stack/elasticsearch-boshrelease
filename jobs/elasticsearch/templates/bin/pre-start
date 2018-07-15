@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+export JAVA_HOME=/var/vcap/packages/java
+
+mkdir -p /var/vcap/packages/elasticsearch/plugins
+
+# install plugins
+rm -rf /var/vcap/packages/elasticsearch/plugins/*
+
+<% p("elasticsearch.plugins").each do |plugin| name, path = plugin.first %>
+  <% if path.start_with? '/var/vcap' %>
+    /var/vcap/packages/elasticsearch/bin/elasticsearch-plugin install "file://<%= path %>"
+  <% else %>
+    /var/vcap/packages/elasticsearch/bin/elasticsearch-plugin install "<%= path %>"
+  <% end %>
+<% end %>
+
+echo "== Installed plugins =="
+/var/vcap/packages/elasticsearch/bin/elasticsearch-plugin list

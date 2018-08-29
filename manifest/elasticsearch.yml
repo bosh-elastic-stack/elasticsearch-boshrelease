@@ -5,9 +5,9 @@ releases:
 - name: elasticsearch
   version: latest
 - name: openjdk
-  version: 0.1.0
-  url: https://github.com/making/openjdk-boshrelease/releases/download/0.1.0/openjdk-boshrelease-0.1.0.tgz
-  sha1: 77b0bdb8f0f9bb65f7493a65671842d740227f89
+  version: 0.1.1
+  url: https://github.com/making/openjdk-boshrelease/releases/download/0.1.1/openjdk-boshrelease-0.1.1.tgz
+  sha1: 06e397150e924755421d21452bd8d42e4f4bed60
 
 stemcells:
 - os: ubuntu-trusty

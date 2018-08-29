@@ -1,7 +1,0 @@
----
-name: java
-
-dependencies: []
-
-files:
-- java/openjdk-1.8.0_172.tar.gz

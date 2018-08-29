@@ -4,6 +4,10 @@ name: elasticsearch
 releases:
 - name: elasticsearch
   version: latest
+- name: openjdk
+  version: 0.1.0
+  url: https://github.com/making/openjdk-boshrelease/releases/download/0.1.0/openjdk-boshrelease-0.1.0.tgz
+  sha1: 77b0bdb8f0f9bb65f7493a65671842d740227f89
 
 stemcells:
 - os: ubuntu-trusty
@@ -13,6 +17,8 @@ stemcells:
 instance_groups:
 - name: elasticsearch-master
   jobs:
+  - name: java
+    release: openjdk
   - name: elasticsearch
     release: elasticsearch
     properties:

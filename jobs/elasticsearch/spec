@@ -12,7 +12,6 @@ templates:
   config/log4j2.properties: config/log4j2.properties
 
 packages:
-- java
 - elasticsearch
 
 provides:

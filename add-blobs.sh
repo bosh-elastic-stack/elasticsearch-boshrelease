@@ -6,7 +6,7 @@ mkdir -p .downloads
 
 cd .downloads
 
-ES_VERSION=6.3.2
+ES_VERSION=6.4.0
 
 if [ ! -f ${DIR}/blobs/java/openjdk-1.8.0_172.tar.gz ];then
     curl -L -O -J https://download.run.pivotal.io/openjdk-jdk/trusty/x86_64/openjdk-1.8.0_172.tar.gz

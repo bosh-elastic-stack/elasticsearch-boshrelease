@@ -4,6 +4,9 @@ analysis-kuromoji/analysis-kuromoji-6.3.1.zip:
 analysis-kuromoji/analysis-kuromoji-6.3.2.zip:
   size: 4640603
   sha: 5d5bdf6176f5b9b3898b1b6635894c12aeb8bf06
+analysis-kuromoji/analysis-kuromoji-6.4.0.zip:
+  size: 4640636
+  sha: a24fc56e3de45f985eec61af96583cfd7f749a86
 elasticsearch/elasticsearch-6.2.4.tar.gz:
   size: 29056810
   sha: 8db5931278fd7a8687659ebcfaeab0d0f87f7d22
@@ -13,6 +16,9 @@ elasticsearch/elasticsearch-6.3.1.tar.gz:
 elasticsearch/elasticsearch-6.3.2.tar.gz:
   size: 91452574
   sha: 7982b300716563125749cd24f9873ea3aed28e4d
+elasticsearch/elasticsearch-6.4.0.tar.gz:
+  size: 97901357
+  sha: cc1d950ec2a3bbc41dc8864afc4153b1f6eb6126
 java/openjdk-1.8.0_162.tar.gz:
   size: 78245143
   sha: 76a74043924dfc1bbb5531b02be014fcd2ef0a6e

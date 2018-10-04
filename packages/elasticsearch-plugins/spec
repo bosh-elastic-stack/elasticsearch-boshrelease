@@ -4,4 +4,4 @@ name: elasticsearch-plugins
 dependencies: []
 
 files:
-- analysis-kuromoji/analysis-kuromoji-6.4.0.zip
+- analysis-kuromoji/analysis-kuromoji-6.4.2.zip

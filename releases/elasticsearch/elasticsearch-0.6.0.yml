@@ -1,0 +1,24 @@
+name: elasticsearch
+version: 0.6.0
+commit_hash: 8d83896
+uncommitted_changes: false
+jobs:
+- name: elasticsearch
+  version: 9b1a5276f8d7e12d155a026b3be850c1d3384372
+  fingerprint: 9b1a5276f8d7e12d155a026b3be850c1d3384372
+  sha1: f0f73eb7ee38e45595a94f1855ef06c1e0ed0792
+- name: elasticsearch-plugins
+  version: 5af6f822a45a369768dca2cc1cd6537e115b9471
+  fingerprint: 5af6f822a45a369768dca2cc1cd6537e115b9471
+  sha1: 3e3e71c1462628af563db2c502a0774b63bbbde5
+packages:
+- name: elasticsearch
+  version: e01176fd3fd65236019811af79a3a2bb8623ab1e
+  fingerprint: e01176fd3fd65236019811af79a3a2bb8623ab1e
+  sha1: a6adcb7d8de9a92d47e2854ddecaad04aa9b3ef0
+  dependencies: []
+- name: elasticsearch-plugins
+  version: c2262f9ddd36a61899c293c6700d752b5b64c570
+  fingerprint: c2262f9ddd36a61899c293c6700d752b5b64c570
+  sha1: d1bf932c20964bd362a84bedcc793d0fa324e094
+  dependencies: []

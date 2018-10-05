@@ -3,7 +3,7 @@ resources:
 - name: repo
   type: git
   source:
-    uri: git@github.com:making/elasticsearch-boshrelease.git
+    uri: git@github.com:bosh-elastic-stack/elasticsearch-boshrelease.git
     branch: master
     private_key: ((github-private-key))
     ignore_paths:
@@ -13,7 +13,7 @@ resources:
 - name: repo-version
   type: semver
   source:
-    uri: git@github.com:making/elasticsearch-boshrelease.git
+    uri: git@github.com:bosh-elastic-stack/elasticsearch-boshrelease.git
     branch: version
     private_key: ((github-private-key))
     file: version
@@ -21,7 +21,7 @@ resources:
 - name: gh-release
   type: github-release
   source:
-    user: making
+    user: bosh-elastic-stack
     repository: elasticsearch-boshrelease
     access_token: ((github-access-token))
 
@@ -81,6 +81,8 @@ jobs:
       <<: *BOSH
       GIT_EMAIL: ((git-email))
       GIT_NAME: ((git-name))
+      S3_ACCESS_KEY_ID: ((s3-access-key-id))
+      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
     config:
       platform: linux
       image_resource:
@@ -103,11 +105,17 @@ jobs:
           cd repo
           shopt -s dotglob
           cp -r ./* ../updated-repo
-          rm -rf .final_builds releases
           VERSION=`cat ../repo-version/number`
           TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
           ln -s ../compiled ./.downloads
           ./add-blobs.sh
+          cat <<EOF > config/private.yml
+          ---
+          blobstore:
+            options:
+              access_key_id: ${S3_ACCESS_KEY_ID}
+              secret_access_key: ${S3_SECRET_ACCESS_KEY}
+          EOF
           bosh create-release --force --version=${VERSION} --final --tarball=../releases/${TARBALL}
           SHA1=`sha1sum ../releases/${TARBALL} | awk '{print $1}'`
           mkdir -p .sha1
@@ -230,7 +238,6 @@ tasks:
         cd repo
         ln -s ../compiled ./.downloads
         ./add-blobs.sh
-        rm -rf .final_builds releases
         bosh create-release --name=elasticsearch-dev --force --timestamp-version --tarball=../releases/elasticsearch-boshrelease.tgz
   bosh-deploy: &BOSH_DEPLOY
     platform: linux
@@ -269,9 +276,14 @@ tasks:
           path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/heap_size?
           value: 768m
         - type: replace
-          path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/plugins?
+          path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/-
           value:
-          - analysis-kuromoji: analysis-kuromoji
+            name: elasticsearch-plugins
+            release: ${RELEASE_NAME}-dev
+        # - type: replace
+        #   path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/plugins?
+        #   value:
+        #   - analysis-kuromoji: analysis-kuromoji
         EOF
         sed -i "s/name: ${RELEASE_NAME}/name: ${RELEASE_NAME}-dev/" manifest/elasticsearch.yml
         sed -i "s/release: ${RELEASE_NAME}/release: ${RELEASE_NAME}-dev/" manifest/elasticsearch.yml
@@ -299,6 +311,7 @@ tasks:
         ip=`bosh vms -d ${RELEASE_NAME}-dev | grep ${RELEASE_NAME} | awk '{print $4}'`
         echo ${ip}
         curl -v http://${ip}:9200/_cluster/health
+        bosh -d ${RELEASE_NAME}-dev ssh -c 'JAVA_HOME=/var/vcap/packages/java sudo -E /var/vcap/packages/elasticsearch/bin/elasticsearch-plugin list'
         echo
         echo "Enabliing HTTPS..."
         bosh -n deploy -d ${RELEASE_NAME}-dev \

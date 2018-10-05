@@ -1,5 +1,7 @@
 name: elasticsearch
 blobstore:
-  provider: local
+  provider: s3
   options:
-    blobstore_path: /tmp/elasticsearch
+    bucket_name: elastic-search-boshrelease
+    region: ap-northeast-1
+    endpoint: https://s3-ap-northeast-1.amazonaws.com

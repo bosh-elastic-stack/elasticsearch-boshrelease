@@ -36,6 +36,9 @@ jobs:
     config:
       <<: *DOWNLOAD_BLOBS
   - task: bosh-create-release
+    params:
+      S3_ACCESS_KEY_ID: ((s3-access-key-id))
+      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
     config:
       <<: *BOSH_CREATE_RELEASE
   - task: bosh-deploy
@@ -55,6 +58,9 @@ jobs:
     config:
       <<: *DOWNLOAD_BLOBS
   - task: bosh-create-release
+    params:
+      S3_ACCESS_KEY_ID: ((s3-access-key-id))
+      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
     config:
       <<: *BOSH_CREATE_RELEASE
   - task: bosh-deploy
@@ -109,6 +115,7 @@ jobs:
           TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
           ln -s ../compiled ./.downloads
           ./add-blobs.sh
+          bosh upload-blobs
           cat <<EOF > config/private.yml
           ---
           blobstore:
@@ -238,6 +245,15 @@ tasks:
         cd repo
         ln -s ../compiled ./.downloads
         ./add-blobs.sh
+        cat <<EOF > config/private.yml
+        ---
+        blobstore:
+          options:
+            access_key_id: ${S3_ACCESS_KEY_ID}
+            secret_access_key: ${S3_SECRET_ACCESS_KEY}
+        EOF
+        bosh upload-blobs
+        mkdir -p src
         bosh create-release --name=elasticsearch-dev --force --timestamp-version --tarball=../releases/elasticsearch-boshrelease.tgz
   bosh-deploy: &BOSH_DEPLOY
     platform: linux

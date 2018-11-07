@@ -4,4 +4,4 @@ name: elasticsearch
 dependencies: []
 
 files:
-- elasticsearch/elasticsearch-6.4.2.tar.gz 
+- elasticsearch/elasticsearch-6.4.3.tar.gz 

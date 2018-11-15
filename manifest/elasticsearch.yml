@@ -10,8 +10,8 @@ releases:
   sha1: 06e397150e924755421d21452bd8d42e4f4bed60
 
 stemcells:
-- os: ubuntu-trusty
-  alias: trusty
+- os: ubuntu-xenial
+  alias: xenial
   version: latest
 
 instance_groups:
@@ -27,7 +27,7 @@ instance_groups:
           allow_master: true
           allow_data: true
   instances: 1
-  stemcell: trusty
+  stemcell: xenial
   update:
     max_in_flight: 1
     serial: true

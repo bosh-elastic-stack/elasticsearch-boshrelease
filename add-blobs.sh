@@ -6,7 +6,7 @@ mkdir -p .downloads
 
 cd .downloads
 
-ES_VERSION=6.4.3
+ES_VERSION=6.5.0
 
 if [ ! -f ${DIR}/blobs/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz ];then
     curl -L -O -J https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz

@@ -1,23 +1,7 @@
-analysis-kuromoji/analysis-kuromoji-6.4.2.zip:
-  size: 4641520
-  object_id: a8e134b2-c353-4de7-4009-6038496f4253
-  sha: d1bf932c20964bd362a84bedcc793d0fa324e094
-analysis-kuromoji/analysis-kuromoji-6.4.3.zip:
-  size: 4640640
-  object_id: 37b5567c-650f-47ae-5150-749bcced6388
-  sha: 4865ecb49df55bbf25498dfcac1c579f13753a24
 analysis-kuromoji/analysis-kuromoji-6.5.0.zip:
   size: 4640638
   object_id: c690ba5e-57c0-4f57-63f2-124c850a0e3e
   sha: 5b793f0eb6bf20bb7e898016ae1d002737fd5534
-elasticsearch/elasticsearch-6.4.2.tar.gz:
-  size: 97825919
-  object_id: c53652e7-21ef-4d80-4657-cc1a506c418a
-  sha: a6adcb7d8de9a92d47e2854ddecaad04aa9b3ef0
-elasticsearch/elasticsearch-6.4.3.tar.gz:
-  size: 97872736
-  object_id: 8e7c1846-0135-498b-6213-cde63b3509cc
-  sha: 57f2d6066b1277ab575e252044bee0ea9fd1b979
 elasticsearch/elasticsearch-6.5.0.tar.gz:
   size: 113280785
   object_id: 5f8fb896-a7c1-4a59-55b5-1adab3ea7364

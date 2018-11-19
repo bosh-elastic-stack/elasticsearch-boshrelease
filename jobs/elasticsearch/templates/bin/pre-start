@@ -6,18 +6,20 @@ mkdir -p /var/vcap/packages/elasticsearch/plugins
 
 # install plugins
 rm -rf /var/vcap/packages/elasticsearch/plugins/*
-
+<%
+  opts = p("elasticsearch.plugin_install_opts").join(' ')
+%>
 if [ -d /var/vcap/packages/elasticsearch-plugins ];then 
 	for f in `ls /var/vcap/packages/elasticsearch-plugins`;do 
 		echo "installing ${f}"
-		elasticsearch-plugin install "file:///var/vcap/packages/elasticsearch-plugins/${f}"
+		elasticsearch-plugin install <%= opts %> "file:///var/vcap/packages/elasticsearch-plugins/${f}"
 	done;
 fi
 <% p("elasticsearch.plugins").each do |plugin| name, path = plugin.first %>
   <% if path.start_with? '/var/vcap' %>
-    elasticsearch-plugin install "file://<%= path %>"
+    elasticsearch-plugin install <%= opts %> "file://<%= path %>"
   <% else %>
-    elasticsearch-plugin install "<%= path %>"
+    elasticsearch-plugin install <%= opts %> "<%= path %>"
   <% end %>
 <% end %>
 

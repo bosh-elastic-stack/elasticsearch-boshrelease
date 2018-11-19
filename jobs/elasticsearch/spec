@@ -55,3 +55,6 @@ properties:
   elasticsearch.plugins:
     description: "Plugins to run elasticsearch with (array[] = { plugin-name: install-source }; e.g. [ { analysis-kuromoji: 'analysis-kuromoji' } ])"
     default: []
+  elasticsearch.plugin_install_opts:
+    description: "command line parameters for 'elasticsearch-plugin install'"
+    default: []

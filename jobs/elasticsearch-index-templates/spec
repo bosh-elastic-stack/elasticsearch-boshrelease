@@ -1,0 +1,14 @@
+---
+name: elasticsearch-index-templates
+
+templates:
+  bin/put-index-template.sh: bin/put-index-template.sh
+  bin/post-deploy: bin/post-deploy
+
+properties: 
+  elasticsearch.index.template.name:
+    description: "Name of the index template to be created/updated. All chars must be lowercase."
+    default: ""
+  elasticsearch.index.template.body:
+    description: "This is the body of the API PUT request. It should be a valid JSON file. In case you want to see a valid example, check the readme file."
+    default: ""

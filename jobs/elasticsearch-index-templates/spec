@@ -2,8 +2,7 @@
 name: elasticsearch-index-templates
 
 templates:
-  bin/put-index-template.sh: bin/put-index-template.sh
-  bin/post-deploy: bin/post-deploy
+  bin/run.sh: bin/run
 
 properties: 
   elasticsearch.index.template.name:

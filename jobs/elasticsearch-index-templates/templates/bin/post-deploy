@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# If a command fails, exit immediately
-set -e
-
-JOB_DIR=/var/vcap/jobs/elasticsearch-index-templates
-exec $JOB_DIR/bin/put-index-template.sh

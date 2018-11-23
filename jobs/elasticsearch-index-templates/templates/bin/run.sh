@@ -3,4 +3,6 @@
 # If a command fails, exit immediately
 set -e
 
-curl -X PUT "localhost:9200/_template/<%=p('elasticsearch.index.template.name') %>" -H 'Content-Type: application/json' --data-binary '<%=p('elasticsearch.index.template.body') %>'
+<% p("elasticsearch.index.template").each do |template| name, body = template.first %>
+	curl -X PUT "localhost:9200/_template/<%= name %>" -H 'Content-Type: application/json' --data-binary '<%= body %>'
+<% end %>

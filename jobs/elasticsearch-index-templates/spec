@@ -5,9 +5,6 @@ templates:
   bin/run.sh: bin/run
 
 properties: 
-  elasticsearch.index.template.name:
-    description: "Name of the index template to be created/updated. All chars must be lowercase."
-    default: ""
-  elasticsearch.index.template.body:
-    description: "This is the body of the API PUT request. It should be a valid JSON file. In case you want to see a valid example, check the readme file."
-    default: ""
+  elasticsearch.index.template:
+    description: "Array that contains the index templates to be created/updated. The name of the index templates must be lowercase. You can see an example in the README"
+    default: []

@@ -1,0 +1,37 @@
+name: elasticsearch
+version: 0.9.0
+commit_hash: 69416d3
+uncommitted_changes: true
+jobs:
+- name: elasticsearch
+  version: 05b01a7ec456d30f1090bb62c36edaea8457174c
+  fingerprint: 05b01a7ec456d30f1090bb62c36edaea8457174c
+  sha1: 7137872ee25906106988c9222c9cf4caf120fafc
+- name: elasticsearch-index-templates
+  version: 4ee9344fa0742566e5491c485a9373dbf1c81d3e
+  fingerprint: 4ee9344fa0742566e5491c485a9373dbf1c81d3e
+  sha1: e429380b05570fd02a870cc9b4afba00a95d5517
+- name: elasticsearch-plugins
+  version: 5af6f822a45a369768dca2cc1cd6537e115b9471
+  fingerprint: 5af6f822a45a369768dca2cc1cd6537e115b9471
+  sha1: db7d250d9b89b86ec837c7e04df946070f5b5587
+packages:
+- name: elasticsearch
+  version: c5285d2f2819d35bfb344c63b88f63ffda930419
+  fingerprint: c5285d2f2819d35bfb344c63b88f63ffda930419
+  sha1: 1d8c336b46f0183f85254dffd0c403acee2c32b7
+  dependencies: []
+- name: elasticsearch-index-templates
+  version: c13b811e3e570968582be4246e64aed588b7e98c
+  fingerprint: c13b811e3e570968582be4246e64aed588b7e98c
+  sha1: 17f6f7dfb647f1f84c81eaa6e3414831fa36ec1f
+  dependencies: []
+- name: elasticsearch-plugins
+  version: f2bef366aa7119a33285b591b00e8b75a1776740
+  fingerprint: f2bef366aa7119a33285b591b00e8b75a1776740
+  sha1: c3e4ada5cca1994b5155d81cd1ed57ef6b8381de
+  dependencies: []
+license:
+  version: a5ddb30188d0881a66ec8d158bb16d4044508bf8
+  fingerprint: a5ddb30188d0881a66ec8d158bb16d4044508bf8
+  sha1: 972d97cac17a8d9471712d658ccd692d3a432b68

@@ -21,6 +21,9 @@ An example of an operation file that will create 2 different index templates (`c
 - type: replace
   path: /instance_groups/name=elasticsearch-master/jobs/-
   value:
+    consumes:
+      elasticsearch:
+        from: elasticsearch-master
     name: elasticsearch-index-templates
     release: elasticsearch
     lifecycle: errand
@@ -62,4 +65,27 @@ An example of an operation file that will create 2 different index templates (`c
     } 
   } 
 }' }]
+```
+
+## Change dynamic properties
+
+If you want to change the cluster dynamic properties, you can do it with the `elasticsearch-dynamic-properties` errand job.
+This job will post a request to the `/_cluster/settings` ( [see more information about this here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html) ) and the body can be defined in the properties.
+
+Here's an example of a valid operation file:
+```
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/-
+  value:
+    name: elasticsearch-dynamic-properties
+    release: elasticsearch
+    lifecycle: errand
+    properties:
+      elasticsearch:
+        dynamic:
+          properties: '{
+            "persistent" : {
+        "indices.recovery.max_bytes_per_sec" : "72mb"
+    }
+}'
 ```

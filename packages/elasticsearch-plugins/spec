@@ -5,3 +5,4 @@ dependencies: []
 
 files:
 - analysis-kuromoji/analysis-kuromoji-6.5.1.zip
+- repository-s3/repository-s3-6.5.1.zip

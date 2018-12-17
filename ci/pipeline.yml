@@ -81,6 +81,13 @@ jobs:
           cp -r ./* ../updated-repo
           VERSION=`cat ../repo-version/number`
           TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
+          cat <<EOF > config/private.yml
+          ---
+          blobstore:
+            options:
+              access_key_id: ${S3_ACCESS_KEY_ID}
+              secret_access_key: ${S3_SECRET_ACCESS_KEY}
+          EOF
           bosh create-release --force --version=${VERSION} --final --tarball=../releases/${TARBALL}
           SHA1=`sha1sum ../releases/${TARBALL} | awk '{print $1}'`
           mkdir -p .sha1

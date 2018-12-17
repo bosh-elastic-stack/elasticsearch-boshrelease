@@ -6,3 +6,15 @@ elasticsearch/elasticsearch-6.5.3.tar.gz:
   size: 113336066
   object_id: 14d1e445-fbf8-4dfd-4acd-545823a2ba41
   sha: 25f04c0a82bbfbdd46e3426eebff6f01fb87f7ac
+repository-azure/repository-azure-6.5.3.zip:
+  size: 3376541
+  object_id: aa9afeb4-eff3-450b-760d-fcf662aba0b6
+  sha: f212a3483b6710fb40cebc85c57cb050f03b7efa
+repository-gcs/repository-gcs-6.5.3.zip:
+  size: 8717136
+  object_id: d61de911-3ab7-46d3-7171-0f7472455af5
+  sha: 12715c3dbc8c2f95e0bd1be16b24dab6c987a88b
+repository-s3/repository-s3-6.5.3.zip:
+  size: 4496493
+  object_id: dec1b867-a230-4f89-75be-eb6d034321dd
+  sha: aec5b912fa99d59de8ded937bf407db9a63ab56c

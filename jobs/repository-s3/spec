@@ -1,0 +1,9 @@
+---
+name: repository-s3
+
+templates: {}
+
+packages:
+- repository-s3
+
+properties: {}

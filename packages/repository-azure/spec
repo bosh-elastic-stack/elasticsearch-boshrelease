@@ -1,0 +1,7 @@
+---
+name: repository-azure
+
+dependencies: []
+
+files:
+- repository-azure/repository-azure-6.5.3.zip

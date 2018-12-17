@@ -1,0 +1,9 @@
+---
+name: repository-gcs
+
+templates: {}
+
+packages:
+- repository-gcs
+
+properties: {}

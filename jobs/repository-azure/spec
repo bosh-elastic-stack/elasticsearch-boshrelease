@@ -1,0 +1,9 @@
+---
+name: repository-azure
+
+templates: {}
+
+packages:
+- repository-azure
+
+properties: {}

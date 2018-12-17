@@ -1,0 +1,7 @@
+---
+name: repository-s3
+
+dependencies: []
+
+files:
+- repository-s3/repository-s3-6.5.3.zip

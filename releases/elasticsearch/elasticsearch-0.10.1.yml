@@ -1,0 +1,41 @@
+name: elasticsearch
+version: 0.10.1
+commit_hash: 2c8745e
+uncommitted_changes: false
+jobs:
+- name: elasticsearch
+  version: 80d186ca7bc0063f00005aff18ff44fb3a3ae302be37e4ddfb4ad65a527328d5
+  fingerprint: 80d186ca7bc0063f00005aff18ff44fb3a3ae302be37e4ddfb4ad65a527328d5
+  sha1: sha256:2f479f33470e427dfa110da9360c4394254563eb0c00a0df733ed54b4cb3dc3e
+- name: elasticsearch-dynamic-properties
+  version: 2f39e53503d77c776cec0790a7bcef982637401aa4889658a5a69a51ed891aee
+  fingerprint: 2f39e53503d77c776cec0790a7bcef982637401aa4889658a5a69a51ed891aee
+  sha1: sha256:e4cf87d07eff581553a8c6498ccf53471b5fa182db7aa86eb73b24dc45a3435a
+- name: elasticsearch-index-templates
+  version: 4c65cfe768d6da81f46900b0ce0c5d43ddc8e752783a67b6eb97bb37dbf625a2
+  fingerprint: 4c65cfe768d6da81f46900b0ce0c5d43ddc8e752783a67b6eb97bb37dbf625a2
+  sha1: sha256:b0c299d41f665135f0c227d4fb37073f7e28ff1938b374fb92666a9a9725978f
+- name: elasticsearch-plugins
+  version: 38ab75838ad272d6bf265edac9cf63a0fd5bc104d707721ce682e7f1bf770382
+  fingerprint: 38ab75838ad272d6bf265edac9cf63a0fd5bc104d707721ce682e7f1bf770382
+  sha1: sha256:68117a80528bde2ab48eb27ea175e6c4897b48d6fe5ecfa3acdd88ce01a5ce85
+packages:
+- name: elasticsearch
+  version: 8ed5069913c9865477f6d75c8b8d25a01cee2d20015b1b1b68e88a272c4fd21a
+  fingerprint: 8ed5069913c9865477f6d75c8b8d25a01cee2d20015b1b1b68e88a272c4fd21a
+  sha1: sha256:55d39200c61558feea8c079a5298ae79b4c4e1a1fdba7e154d59e64d8ddfb37d
+  dependencies: []
+- name: elasticsearch-index-templates
+  version: a12df48ea6f42617b66ff0f009ac777ad624b072187e53015ee09ef1b75c3fbd
+  fingerprint: a12df48ea6f42617b66ff0f009ac777ad624b072187e53015ee09ef1b75c3fbd
+  sha1: sha256:62bfc22a74414f44cf0884294d190d825f964c37e2c6fe2e1f5bfcb23a949753
+  dependencies: []
+- name: elasticsearch-plugins
+  version: b230ba325d683b28df369a11a04d5febe8c9cf55092730e34af518033bc0d039
+  fingerprint: b230ba325d683b28df369a11a04d5febe8c9cf55092730e34af518033bc0d039
+  sha1: sha256:e92fef68839f33d1d9ed7777f1e8b9f4de39c7a67a7791f1c7121ce95054c241
+  dependencies: []
+license:
+  version: 738d58f6841ba4cbc56eb2097cfdaf60cd6784ab98ddfc42ab34bf2fb33f2214
+  fingerprint: 738d58f6841ba4cbc56eb2097cfdaf60cd6784ab98ddfc42ab34bf2fb33f2214
+  sha1: sha256:7ee57b372e5339f9bcb24aa772772b4413a13235597e54cb439821b92bc7b8a8

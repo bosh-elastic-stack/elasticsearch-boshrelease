@@ -1,0 +1,3 @@
+set -e
+
+cp analysis-kuromoji/analysis-kuromoji-6.5.3.zip $BOSH_INSTALL_TARGET/analysis-kuromoji.zip

@@ -1,0 +1,9 @@
+---
+name: analysis-kuromoji
+
+templates: {}
+
+packages:
+- analysis-kuromoji
+
+properties: {}

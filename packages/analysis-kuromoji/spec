@@ -1,5 +1,5 @@
 ---
-name: elasticsearch-plugins
+name: analysis-kuromoji
 
 dependencies: []
 

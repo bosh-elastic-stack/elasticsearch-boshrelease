@@ -214,14 +214,13 @@ tasks:
           path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/heap_size?
           value: 768m
         - type: replace
+          path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/plugins?/-
+          value: /var/vcap/packages/analysis-kuromoji/analysis-kuromoji.zip
+        - type: replace
           path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/-
           value:
-            name: elasticsearch-plugins
+            name: analysis-kuromoji
             release: ${RELEASE_NAME}-dev
-        # - type: replace
-        #   path: /instance_groups/name=${RELEASE_NAME}-dev-master/jobs/name=elasticsearch/properties/elasticsearch/plugins?
-        #   value:
-        #   - analysis-kuromoji: analysis-kuromoji
         EOF
         sed -i "s/name: ${RELEASE_NAME}/name: ${RELEASE_NAME}-dev/" manifest/elasticsearch.yml
         sed -i "s/release: ${RELEASE_NAME}/release: ${RELEASE_NAME}-dev/" manifest/elasticsearch.yml

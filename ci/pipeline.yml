@@ -26,37 +26,12 @@ resources:
     access_token: ((github-access-token))
 
 jobs:
-- name: bosh-deploy-dev-in-docker
-  serial: true
-  plan:
-  - aggregate:
-    - get: repo
-      # trigger: true
-  - task: download-blobs
-    config:
-      <<: *DOWNLOAD_BLOBS
-  - task: bosh-create-release
-    params:
-      S3_ACCESS_KEY_ID: ((s3-access-key-id))
-      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
-    config:
-      <<: *BOSH_CREATE_RELEASE
-  - task: bosh-deploy
-    privileged: true
-    params:
-      RELEASE_NAME: elasticsearch
-      IS_DOCKER: true
-    config:
-      <<: *BOSH_DEPLOY
 - name: bosh-deploy-dev-in-exsiting-env
   serial: true
   plan:
   - aggregate:
     - get: repo
       trigger: true
-  - task: download-blobs
-    config:
-      <<: *DOWNLOAD_BLOBS
   - task: bosh-create-release
     params:
       S3_ACCESS_KEY_ID: ((s3-access-key-id))
@@ -75,13 +50,7 @@ jobs:
   plan:
   - aggregate:
     - get: repo
-      # passed:
-      # - bosh-deploy-dev-in-exsiting-env
-      # - bosh-deploy-dev-in-docker
     - get: repo-version
-  - task: download-blobs
-    config:
-      <<: *DOWNLOAD_BLOBS
   - task: create-release
     params:
       <<: *BOSH
@@ -98,7 +67,6 @@ jobs:
       inputs:
       - name: repo
       - name: repo-version
-      - name: compiled
       outputs:
       - name: releases
       - name: updated-repo
@@ -113,16 +81,6 @@ jobs:
           cp -r ./* ../updated-repo
           VERSION=`cat ../repo-version/number`
           TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
-          ln -s ../compiled ./.downloads
-          ./add-blobs.sh
-          cat <<EOF > config/private.yml
-          ---
-          blobstore:
-            options:
-              access_key_id: ${S3_ACCESS_KEY_ID}
-              secret_access_key: ${S3_SECRET_ACCESS_KEY}
-          EOF
-          bosh upload-blobs
           bosh create-release --force --version=${VERSION} --final --tarball=../releases/${TARBALL}
           SHA1=`sha1sum ../releases/${TARBALL} | awk '{print $1}'`
           mkdir -p .sha1
@@ -201,30 +159,7 @@ params:
     BOSH_ENVIRONMENT: ((bosh-environment))
     BOSH_CLIENT_SECRET: ((bosh-client-secret))
     BOSH_CA_CERT: ((bosh-ca-cert))
-tasks:
-  download-blobs: &DOWNLOAD_BLOBS
-    platform: linux
-    image_resource:
-      type: docker-image
-      source:
-        repository: bosh/main-bosh-docker
-    inputs:
-    - name: repo
-    outputs:
-    - name: compiled
-    caches:
-    - path: repo/blobs
-    - path: repo/.download
-    run:
-      path: bash
-      args: 
-      - -c
-      - |
-        set -e
-        cd repo
-        ./add-blobs.sh
-        cp -ra blobs/* ../compiled/
-        find ../compiled  
+tasks: 
   bosh-create-release: &BOSH_CREATE_RELEASE
     platform: linux
     image_resource:
@@ -233,7 +168,6 @@ tasks:
         repository: bosh/main-bosh-docker
     inputs:
     - name: repo
-    - name: compiled
     outputs:
     - name: releases
     run:
@@ -243,16 +177,6 @@ tasks:
       - |
         set -e
         cd repo
-        ln -s ../compiled ./.downloads
-        ./add-blobs.sh
-        cat <<EOF > config/private.yml
-        ---
-        blobstore:
-          options:
-            access_key_id: ${S3_ACCESS_KEY_ID}
-            secret_access_key: ${S3_SECRET_ACCESS_KEY}
-        EOF
-        bosh upload-blobs
         mkdir -p src
         bosh create-release --name=elasticsearch-dev --force --timestamp-version --tarball=../releases/elasticsearch-boshrelease.tgz
   bosh-deploy: &BOSH_DEPLOY
@@ -273,15 +197,6 @@ tasks:
       - |
         set -e
         echo "======"
-        if [ "${IS_DOCKER}" == "true" ];then
-          echo "Starting bosh..."
-          rm -rf ~/.bosh
-          ln -fs $(pwd)/repo/.bosh ~/.bosh
-          start-bosh
-          source /tmp/local-bosh/director/env
-          VM_TYPE=default
-          bosh upload-stemcell https://s3.amazonaws.com/bosh-core-stemcells/warden/bosh-stemcell-170.5-warden-boshlite-ubuntu-xenial-go_agent.tgz
-        fi
         bosh env
         bosh upload-release releases/*.tgz
         cd repo

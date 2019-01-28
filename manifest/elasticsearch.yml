@@ -5,9 +5,9 @@ releases:
 - name: elasticsearch
   version: latest
 - name: openjdk
-  version: 8.0.1
-  url: https://github.com/making/openjdk-boshrelease/releases/download/8.0.1/openjdk-boshrelease-8.0.1.tgz
-  sha1: d02566fb6d974de4b60bf44dc21e56422c7da3fd
+  version: 8.0.2
+  url: https://github.com/making/openjdk-boshrelease/releases/download/8.0.2/openjdk-boshrelease-8.0.2.tgz
+  sha1: e76b73d2560d143b155e958aa06a2e266e261464
 
 stemcells:
 - os: ubuntu-xenial

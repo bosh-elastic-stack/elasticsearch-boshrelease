@@ -5,8 +5,8 @@ set -e
 
 <% if !p("elasticsearch.health.disable_post_start") %>
 
-export timeout=200
-export polling_frequency=1
+export timeout=<%= p("elasticsearch.health.timeout") %>
+export polling_frequency=<%= p("elasticsearch.health.interval") %>
 
 export max_attempts=$((timeout / polling_frequency))
 export attempts=0

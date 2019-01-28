@@ -49,6 +49,12 @@ properties:
   elasticsearch.node.allow_ingest:
     description: Allow node to become ingest node? (true / false)
     default: false
+  elasticsearch.health.timeout:
+    description: Post-start timeout for node to join cluster (seconds)
+    default: 300
+  elasticsearch.health.interval:
+    description: Post-start interval for node to join cluster (seconds)
+    default: 15
   elasticsearch.discovery.minimum_master_nodes:
     description: The minimum number of master eligible nodes a node should "see" in order to operate within the cluster. Recommended to set it to a higher value than 1 when running more than 2 nodes in the cluster.
     default: "auto"

@@ -29,7 +29,7 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
         rm ${out}
         # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
         curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_all/_settings \
-          -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "1m"}}'
+          -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "<%= p("elasticsearch.recovery.delay_allocation") %>"}}'
         exit 0
     fi
     <% else %>
@@ -38,7 +38,7 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
         <% if p("elasticsearch.node.allow_data") %>
         # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
         curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_all/_settings \
-          -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "1m"}}'
+          -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "<%= p("elasticsearch.recovery.delay_allocation") %>"}}'
         <% end %> 
         exit 0
     fi

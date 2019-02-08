@@ -1,14 +1,20 @@
 analysis-kuromoji/analysis-kuromoji-6.6.0.zip:
   size: 4640635
+  object_id: 5e7762df-72e5-410e-40ef-4238b66c5252
   sha: e3923c2eb1e9aed633f9ea239b3a9d1d0ac28de7
 elasticsearch/elasticsearch-6.6.0.tar.gz:
   size: 114106988
+  object_id: c4b360aa-87ed-4a5b-59a3-783ffea1f0ce
+  sha: ""
 repository-azure/repository-azure-6.6.0.zip:
   size: 3376559
+  object_id: 7eb8640a-1021-426c-648c-d33cb5b54c0e
   sha: a63ecc8db77989faf2cfb73c8e358d6bd7076fcd
 repository-gcs/repository-gcs-6.6.0.zip:
   size: 8717026
+  object_id: d5d8a081-8f51-4b70-6cc2-9af4f5283498
   sha: 6c94ddeb35a4ec6f7a04f8ffcc8f585e1e7c365a
 repository-s3/repository-s3-6.6.0.zip:
   size: 4496150
+  object_id: 468b3650-012a-4161-415d-d658b857c71c
   sha: 605dd516e78517fb6e3585e18c7b6205e48ad818

@@ -24,12 +24,11 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
     status=$(cat ${out} | tail -n 1)
     echo "body: ${body}"
     echo "status: ${status}"
+    curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_cluster/settings \
+	-d '{"persistent": {"cluster.routing.allocation.enable": "all"}}'
     <% if p("elasticsearch.node.allow_data") and not p("elasticsearch.node.allow_master") %>
     if [ "${status}" = "200" ] && echo ${body} | grep '"status":"green"'; then
         rm ${out}
-        # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
-        curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_all/_settings \
-          -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "<%= p("elasticsearch.recovery.delay_allocation") %>"}}'
         exit 0
     fi
     <% else %>

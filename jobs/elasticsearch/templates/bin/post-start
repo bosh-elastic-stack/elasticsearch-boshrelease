@@ -35,7 +35,6 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
     if [[ "${status}" = "200" ]]; then
         rm ${out}
         <% if p("elasticsearch.node.allow_data") %>
-        # https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/39
         curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_all/_settings \
           -d '{"settings": {"index.unassigned.node_left.delayed_timeout": "<%= p("elasticsearch.recovery.delay_allocation") %>"}}'
         <% end %> 

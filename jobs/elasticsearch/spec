@@ -67,3 +67,8 @@ properties:
   elasticsearch.health.disable_post_start:
     description: Allow node to run post-start script? (true / false)
     default: false
+  elasticsearch.cluster.routing.allocation.enable_post_start:
+    description: |
+      The strategy to enable allocation for specific kinds of shards (all / primaries / new_primaries) 
+      see also https://www.elastic.co/guide/en/elasticsearch/reference/current/shards-allocation.html
+    default: all

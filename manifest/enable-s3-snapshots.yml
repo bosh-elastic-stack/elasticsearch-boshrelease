@@ -1,0 +1,23 @@
+- type: replace
+  path: /releases/-
+  value:
+    name: awscli
+    version: 0.0.1
+    url: https://github.com/making/awscli-boshrelease/releases/download/0.0.1/awscli-boshrelease-0.0.1.tgz
+    sha1: 481d9efe1f90acd91f1a7c2d679e551fe11f541e
+
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch?/cloud/aws/access_key
+  value: ((aws_access_key))
+
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch?/cloud/aws/secret_key
+  value: ((aws_secret_key))
+
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch?/cloud/aws/bucket
+  value: ((aws_s3_bucket))
+
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch?/snapshots/repository
+  value: ((snapshots_repository))

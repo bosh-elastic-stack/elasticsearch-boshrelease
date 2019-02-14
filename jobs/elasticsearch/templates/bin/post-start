@@ -1,6 +1,26 @@
 #!/bin/bash
 # Inspired by https://github.com/cloudfoundry/exemplar-release/blob/master/jobs/paragon/templates/post-start
 # If a command fails, exit immediately
+set +e
+
+echo "== AssociateIamInstanceProfile =="
+## add ec2 instance role
+<% if p('elasticsearch.cloud.aws.access_key') != '' and p('elasticsearch.cloud.aws.secret_key') != '' and p('elasticsearch.cloud.aws.bucket') != '' %>
+export AWS_ACCESS_KEY_ID=<%= p('elasticsearch.cloud.aws.access_key') %>
+export AWS_SECRET_ACCESS_KEY=<%= p('elasticsearch.cloud.aws.secret_key') %>
+export AWS_CLI=/var/vcap/packages/awscli/bin/aws
+
+curl -sS http://169.254.169.254
+if [[ $? == 0 ]]; then
+  INSTANCE_ID=$(curl -sS http://169.254.169.254/latest/meta-data/instance-id)
+  REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')
+  iam_check=$(curl -sS http://169.254.169.254/latest/meta-data/iam/info | grep "404 - Not Found")
+  if [[ $iam_check != "" ]]; then
+      $AWS_CLI ec2 associate-iam-instance-profile --instance-id=${INSTANCE_ID} --region ${REGION} --iam-instance-profile Name="<%= p('elasticsearch.cloud.aws.role_name') %>"
+  fi
+fi
+<% end %>
+
 set -e
 
 <% if !p("elasticsearch.health.disable_post_start") %>

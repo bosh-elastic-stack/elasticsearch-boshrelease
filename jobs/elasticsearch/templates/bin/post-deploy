@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+JOB_DIR=/var/vcap/jobs/elasticsearch
+BIN_DIR=/var/vcap/packages/elasticsearch/bin
+
+export JAVA_HOME=/var/vcap/packages/java
+export PATH=$PATH:$JAVA_HOME/bin
+
+
+<% if p('elasticsearch.cloud.aws.access_key') != '' and p('elasticsearch.cloud.aws.secret_key') != '' and spec.bootstrap %>
+  echo "<%= p('elasticsearch.cloud.aws.access_key') %>" | $BIN_DIR/elasticsearch-keystore add -xf s3.client.default.access_key
+  echo "<%= p('elasticsearch.cloud.aws.secret_key') %>" | $BIN_DIR/elasticsearch-keystore add -xf s3.client.default.secret_key
+  curl -X POST "http://localhost:9200/_nodes/reload_secure_settings"
+<% end %>
+
+<% if p('elasticsearch.cloud.aws.bucket') != '' and p('elasticsearch.node.allow_master') and spec.bootstrap %>
+curl -s localhost:9200/_snapshot/<%= p('elasticsearch.snapshots.repository') %> \
+  -X PUT -H "Content-Type: application/json" \
+  -d '{"type": "s3", "settings": {"bucket": "<%= p('elasticsearch.cloud.aws.bucket') %>"}}'
+<% end %>

@@ -4,6 +4,7 @@ name: elasticsearch
 templates:
   bin/ctl: bin/ctl
   bin/post-start: bin/post-start
+  bin/post-deploy: bin/post-deploy
   bin/pre-start: bin/pre-start
   bin/drain: bin/drain
   bin/ctl_utils.sh: bin/ctl_utils.sh
@@ -72,3 +73,15 @@ properties:
       The strategy to enable allocation for specific kinds of shards (all / primaries / new_primaries) 
       see also https://www.elastic.co/guide/en/elasticsearch/reference/current/shards-allocation.html
     default: all
+  elasticsearch.cloud.aws.access_key:
+    description: AWS access_key
+  elasticsearch.cloud.aws.secret_key:
+    description: AWS secret_key
+  elasticsearch.cloud.aws.role_name:
+    description: AWS AssociateIamInstanceProfile
+  elasticsearch.cloud.aws.bucket:
+    description: Bucket name on S3 where to keep snapshots
+    default: ""
+  elasticsearch.snapshots.repository:
+    description: Repository name for automatic snapshots
+    default: ""

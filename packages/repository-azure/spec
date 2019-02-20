@@ -4,4 +4,4 @@ name: repository-azure
 dependencies: []
 
 files:
-- repository-azure/repository-azure-6.6.0.zip
+- repository-azure/repository-azure-6.6.1.zip

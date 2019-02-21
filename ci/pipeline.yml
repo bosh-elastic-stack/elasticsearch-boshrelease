@@ -1,4 +1,9 @@
 ---
+resource_types:
+- name: dynamic-metalink
+  type: docker-image
+  source:
+    repository: dpb587/dynamic-metalink-resource
 resources:
 - name: repo
   type: git
@@ -24,8 +29,92 @@ resources:
     user: bosh-elastic-stack
     repository: elasticsearch-boshrelease
     access_token: ((github-access-token))
+- name: utils
+  type: git
+  source:
+    uri: https://github.com/making/ci-utils.git
+    branch: master
+- name: elasticsearch
+  type: dynamic-metalink
+  check_every: 30m
+  source:
+    version_check: |
+      curl -s https://www.elastic.co/downloads/past-releases \
+        | grep 'prod_array' \
+        | head -n 1 \
+        | sed -e 's/        var prod_array = //' -e 's/,$//g' \
+        | jq 'map(select(.name == "Elasticsearch")) | map(.version[])' | jq -r '.[]'
+    metalink_get: |
+      jq -n '
+        "elasticsearch-\(env.version).tar.gz" | {
+          "files": [
+            { "name": .,
+              "urls": [ { "url": "https://artifacts.elastic.co/downloads/elasticsearch/\(.)" } ] } ] }'
 
 jobs:
+- name: update-pr
+  serial: true
+  plan:
+  - aggregate:
+    - get: release
+      resource: elasticsearch
+      trigger: true
+      params:
+        skip_download: true
+    - get: repo
+    - get: utils
+  - task: update-elasticsearch
+    params:
+      GIT_EMAIL: ((git-email))
+      GIT_NAME: ((git-name))
+      GIT_SSH_KEY: ((github-private-key))
+      GITHUB_API_TOKEN: ((github-access-token))
+      S3_ACCESS_KEY_ID: ((s3-access-key-id))
+      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: bosh/main-bosh-docker
+      inputs:
+      - name: release
+      - name: repo
+      - name: utils
+      outputs:
+      - name: updated-repo
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -e
+          shopt -s dotglob
+          source utils/scripts/generate-pr.sh
+          CURRENT_VERSION=`grep ES_VERSION= repo/add-blobs.sh | tr -d 'ES_VERSION='`
+          NEW_VERSION=$(cat release/.resource/version)
+          
+          echo "Current: $CURRENT_VERSION"
+          echo "New    : $NEW_VERSION"
+          cd repo
+          sed -i.swp "s/$CURRENT_VERSION/$NEW_VERSION/g" `grep -riIl $CURRENT_VERSION packages/` add-blobs.sh
+          rm -f `find . -name '*.swp'`
+
+          ./add-blobs.sh
+          cat <<EOF > config/private.yml
+          ---
+          blobstore:
+            options:
+              access_key_id: ${S3_ACCESS_KEY_ID}
+              secret_access_key: ${S3_SECRET_ACCESS_KEY}
+          EOF
+          bosh upload-blobs
+          sed -i.swp "/$CURRENT_VERSION/,/sha/ d" config/blobs.yml
+          git diff | cat
+          cp -r ./* ../updated-repo
+          cd ../updated-repo
+          generate_pull_request "making-bot" "elasticsearch" "${NEW_VERSION}" "bosh-elastic-stack/elasticsearch-boshrelease" "master"
+
 - name: bosh-deploy-dev-in-exsiting-env
   serial: true
   plan:

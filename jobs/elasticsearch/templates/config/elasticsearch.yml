@@ -121,7 +121,6 @@ cluster.name: <%= cluster_name %>
   end
 %>
 discovery.zen.minimum_master_nodes: <%= minimum_master_nodes %>
-
 <%
   master_hosts = nil
   if_link("elasticsearch") { |elasticsearch_link| master_hosts = elasticsearch_link.instances.map {|e| e.address}.join(',') }
@@ -130,3 +129,6 @@ discovery.zen.minimum_master_nodes: <%= minimum_master_nodes %>
   end
 %>
 discovery.zen.ping.unicast.hosts: <%= master_hosts %>
+<% if_p('elasticsearch.config_options') do |config_options| %>
+<%= config_options.to_yaml.gsub(/---/, '') %>
+<% end %>

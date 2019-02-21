@@ -89,3 +89,10 @@ Here's an example of a valid operation file:
     }
 }'
 ```
+
+### How to test spec files
+
+```
+bundle install
+bundle exec rspec spec/jobs/*_spec.rb
+```

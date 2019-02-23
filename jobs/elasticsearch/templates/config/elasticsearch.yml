@@ -130,3 +130,44 @@ discovery.zen.minimum_master_nodes: <%= minimum_master_nodes %>
   end
 %>
 discovery.zen.ping.unicast.hosts: <%= master_hosts %>
+
+<% if_p('xpack.monitoring.enabled') do |enabled| -%>
+xpack.monitoring.enabled: <%= enabled %>
+<% end -%>
+<% if_p('xpack.monitoring.collection.enabled') do |enabled| -%>
+xpack.monitoring.collection.enabled: <%= enabled %>
+<% end -%>
+<% if_p('xpack.monitoring.collection.interval') do |interval| -%>
+xpack.monitoring.collection.interval: <%= interval %>
+<% end -%>
+<% if_p('xpack.monitoring.elasticsearch.collection.enabled') do |enabled| -%>
+xpack.monitoring.elasticsearch.collection.enabled: <%= enabled %>
+<% end -%>
+<% if_p('xpack.monitoring.collection.cluster.stats.timeout') do |timeout| -%>
+xpack.monitoring.collection.cluster.stats.timeout: <%= timeout %>
+<% end -%>
+<% if_p('xpack.monitoring.collection.indices') do |indices| -%>
+xpack.monitoring.collection.indices: <%= indices %>
+<% end -%>
+<% if_p('xpack.monitoring.collection.index.stats.timeout') do |timeout| -%>
+xpack.monitoring.collection.index.stats.timeout: <%= timeout %>
+<% end -%>
+<% if_p('xpack.monitoring.collection.index.recovery.active_only') do |active_only| -%>
+xpack.monitoring.collection.index.recovery.active_only: <%= active_only %>
+<% end -%>
+<% if_p('xpack.monitoring.collection.index.recovery.timeout') do |timeout| -%>
+xpack.monitoring.collection.index.recovery.timeout: <%= timeout %>
+<% end -%>
+<% if_p('xpack.monitoring.history.duration') do |duration| -%>
+xpack.monitoring.history.duration: <%= duration %>
+<% end -%>
+<%
+  if_p('xpack.monitoring.exporters') do |exporter|
+    exporter.each_key do |key|
+-%>
+xpack.monitoring.exporters:
+  <%= key %>: 
+    type: <%= exporter[key]["type"] %>
+    use_ingest: <%= exporter[key]["use_ingest"] %>
+  <% end -%>
+<% end -%>

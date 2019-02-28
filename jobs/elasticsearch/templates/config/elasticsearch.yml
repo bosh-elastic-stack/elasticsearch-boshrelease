@@ -92,6 +92,7 @@ network.host: 0.0.0.0
 path.logs: /var/vcap/sys/log/elasticsearch
 path.data: /var/vcap/store/elasticsearch
 node.name: <%= name %>/<%= index %>
+node.attr.zone: <%= spec.az %>
 node.master: <%= p("elasticsearch.node.allow_master") %>
 node.data: <%= p("elasticsearch.node.allow_data") %>
 node.ingest: <%= p("elasticsearch.node.allow_ingest") %>

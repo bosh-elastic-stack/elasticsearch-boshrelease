@@ -61,4 +61,40 @@ describe 'elasticsearch job' do
       expect(config['xpack']['watcher']['enabled']).to eq(true)
     end
   end
+
+  describe 'keystore-add.sh' do
+    let(:template) { job.template('bin/keystore-add.sh') }
+    let(:links) { [
+        Bosh::Template::Test::Link.new(
+          name: 'elasticsearch',
+          instances: [Bosh::Template::Test::LinkInstance.new(address: '10.0.8.2')],
+          properties: {
+            'elasticsearch'=> {
+              'cluster_name' => 'test'
+            },
+          }
+        )
+      ] }
+
+    it 'default works' do
+      keystore_add = template.render({}, consumes: links).strip
+      expect(keystore_add).to starting_with('#!/bin/bash')
+      expect(keystore_add).to ending_with('export PATH=$PATH:/var/vcap/packages/elasticsearch/bin')
+    end
+
+    it 'secure_settings works' do
+      keystore_add = template.render({'elasticsearch' => {
+        'secure_settings' => [
+          {'command' => 'add', 'name' => 's3.client.default.access_key', 'value' => 'aaa'},
+          {'command' => 'remove', 'name' => 's3.client.default.secret_key', 'value' => 'bbb'},
+          {'command' => 'add-file', 'name' => 'gcs.client.default.credentials_file', 'value' => '/tmp/credentials'}
+        ]
+      }}, consumes: links).strip
+      expect(keystore_add).to starting_with('#!/bin/bash')
+      expect(keystore_add).to include('echo "aaa" | elasticsearch-keystore add -xf  s3.client.default.access_key')
+      expect(keystore_add).to include('elasticsearch-keystore remove s3.client.default.secret_key || true')
+      expect(keystore_add).to include('elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/credentials')
+      expect(keystore_add).to ending_with('elasticsearch-keystore list || true')
+    end
+  end
 end

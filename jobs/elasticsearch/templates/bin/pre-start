@@ -25,3 +25,5 @@ fi
 
 echo "== Installed plugins =="
 elasticsearch-plugin list
+
+/var/vcap/jobs/elasticsearch/bin/keystore-add.sh

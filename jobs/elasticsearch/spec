@@ -6,6 +6,7 @@ templates:
   bin/post-start: bin/post-start
   bin/pre-start: bin/pre-start
   bin/drain: bin/drain
+  bin/keystore-add.sh: bin/keystore-add.sh
   bin/ctl_utils.sh: bin/ctl_utils.sh
   config/elasticsearch.yml: config/elasticsearch.yml
   config/jvm.options: config/jvm.options
@@ -72,5 +73,23 @@ properties:
       The strategy to enable allocation for specific kinds of shards (all / primaries / new_primaries) 
       see also https://www.elastic.co/guide/en/elasticsearch/reference/current/shards-allocation.html
     default: all
+  elasticsearch.secure_settings:
+    description: |
+      properties to be stored in keystore
+    example:
+      elasticsearch:
+        secure_settings:
+        - command: add
+          name: s3.client.default.access_key
+          value: aaaa
+        - command: add
+          name: s3.client.default.secret_key
+          value: bbbb
+        - command: add-file
+          name: gcs.client.default.credentials_file
+          value: /tmp/credentials
+        - command: remove
+          name: barbar
+          value: fooo
   elasticsearch.config_options:
     description: "Additional options to append to elasticsearch.yml (YAML format)."

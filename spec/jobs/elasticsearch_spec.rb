@@ -26,7 +26,7 @@ describe 'elasticsearch job' do
       expect(config['node.master']).to eq(true)
       expect(config['node.data']).to eq(true)
       expect(config['node.ingest']).to eq(false)
-			expect(config['node.attr.zone']).to eq('az1')
+      expect(config['node.attr.zone']).to eq('az1')
       expect(config['cluster.name']).to eq('test')
       expect(config['discovery.zen.minimum_master_nodes']).to eq(1)
       expect(config['discovery.zen.ping.unicast.hosts']).to eq('10.0.8.2')

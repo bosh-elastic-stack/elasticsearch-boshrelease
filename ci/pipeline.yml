@@ -166,6 +166,9 @@ jobs:
         - |
           set -e
           cd repo
+          gem install bundler
+          bundle install
+          bundle exec rspec spec/jobs/*_spec.rb
           shopt -s dotglob
           cp -r ./* ../updated-repo
           VERSION=`cat ../repo-version/number`
@@ -273,6 +276,9 @@ tasks:
       - |
         set -e
         cd repo
+        gem install bundler
+        bundle install
+        bundle exec rspec spec/jobs/*_spec.rb
         mkdir -p src
         bosh create-release --name=elasticsearch-dev --force --timestamp-version --tarball=../releases/elasticsearch-boshrelease.tgz
   bosh-deploy: &BOSH_DEPLOY

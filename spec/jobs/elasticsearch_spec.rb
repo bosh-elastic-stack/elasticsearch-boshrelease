@@ -116,7 +116,7 @@ describe 'elasticsearch job' do
     it 'sets plugins properties' do
       prestart = template.render({'elasticsearch' => {
         'plugins' => [ { 'repository-gcs': 'repository-gcs' } ],
-        'plugin_install_opts' => '--batch'
+        'plugin_install_opts' => ['--batch']
       }}, consumes: links).strip
       expect(prestart).to include('elasticsearch-plugin install --batch "repository-gcs"')
     end

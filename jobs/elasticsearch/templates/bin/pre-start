@@ -7,7 +7,7 @@ mkdir -p /var/vcap/packages/elasticsearch/plugins
 # install plugins
 rm -rf /var/vcap/packages/elasticsearch/plugins/*
 <%
-  opts = p("elasticsearch.plugin_install_opts").join(' ')
+  opts = p("elasticsearch.plugin_install_opts")
 %>
 if [ -d /var/vcap/packages/elasticsearch-plugins ];then 
 	for f in `ls /var/vcap/packages/elasticsearch-plugins`;do 
@@ -25,3 +25,5 @@ fi
 
 echo "== Installed plugins =="
 elasticsearch-plugin list
+
+/var/vcap/jobs/elasticsearch/bin/keystore-add.sh

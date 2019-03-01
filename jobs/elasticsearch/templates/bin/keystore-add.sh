@@ -9,7 +9,7 @@ echo "<%= setting['command'] %>: <%= setting['name'] %>"
 <% if setting['command'] == 'add' then %>
 echo "<%= setting['value'] %>" | elasticsearch-keystore add -xf  <%= setting['name'] %>
 <% elsif setting['command'] == 'add-file'  %>
-elasticsearch-keystore add-file <%= setting['name'] %> <%= setting['value'] %>
+elasticsearch-keystore add-file --f <%= setting['name'] %> <%= setting['value'] %>
 <% elsif setting['command'] == 'remove'  %>
 elasticsearch-keystore remove <%= setting['name'] %> || true
 <% end %>

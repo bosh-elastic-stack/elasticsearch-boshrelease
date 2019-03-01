@@ -94,8 +94,31 @@ describe 'elasticsearch job' do
       expect(keystore_add).to starting_with('#!/bin/bash')
       expect(keystore_add).to include('echo "aaa" | elasticsearch-keystore add -xf  s3.client.default.access_key')
       expect(keystore_add).to include('elasticsearch-keystore remove s3.client.default.secret_key || true')
-      expect(keystore_add).to include('elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/credentials')
+      expect(keystore_add).to include('elasticsearch-keystore add-file --f gcs.client.default.credentials_file /tmp/credentials')
       expect(keystore_add).to ending_with('elasticsearch-keystore list || true')
+    end
+  end
+
+  describe 'pre-start.sh' do
+    let(:template) { job.template('bin/pre-start') }
+    let(:links) { [
+        Bosh::Template::Test::Link.new(
+          name: 'elasticsearch',
+          instances: [Bosh::Template::Test::LinkInstance.new(address: '10.0.8.2')],
+          properties: {
+            'elasticsearch'=> {
+              'cluster_name' => 'test'
+            },
+          }
+        )
+      ] }
+
+    it 'sets plugins properties' do
+      prestart = template.render({'elasticsearch' => {
+        'plugins' => [ { 'repository-gcs': 'repository-gcs' } ],
+        'plugin_install_opts' => '--batch'
+      }}, consumes: links).strip
+      expect(prestart).to include('elasticsearch-plugin install --batch "repository-gcs"')
     end
   end
 end

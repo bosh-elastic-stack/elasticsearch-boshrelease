@@ -14,7 +14,7 @@ properties:
     description: "Protocl of elasticsearch master to send elasticsearch requests to (http or https)"
     default: "http"
   elasticsearch.prefer_bosh_link:
-    description: "Use bosh link to connect elasticsearch in prioriy to kibana.elasticsearch.host/port"
+    description: "Use bosh link to connect elasticsearch in prioriy to elasticsearch.host/port"
     default: true
   elasticsearch.host:
     description: "IP address of elasticsearch master to send elasticsearch requests to"

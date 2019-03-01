@@ -2,6 +2,8 @@
 set -e
 export JAVA_HOME=/var/vcap/packages/java
 export PATH=$PATH:/var/vcap/packages/elasticsearch/bin
+
+rm -f /var/vcap/packages/elasticsearch/config/elasticsearch.keystore
 <% if_p('elasticsearch.secure_settings') do |secure_settings| %>
 echo "== Configure secure settings =="
 <% secure_settings.each do |setting| %>

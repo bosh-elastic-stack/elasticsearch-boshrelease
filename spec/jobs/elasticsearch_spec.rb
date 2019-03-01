@@ -80,7 +80,7 @@ describe 'elasticsearch job' do
     it 'default works' do
       keystore_add = template.render({}, consumes: links).strip
       expect(keystore_add).to starting_with('#!/bin/bash')
-      expect(keystore_add).to ending_with('export PATH=$PATH:/var/vcap/packages/elasticsearch/bin')
+      expect(keystore_add).to ending_with('rm -f /var/vcap/packages/elasticsearch/config/elasticsearch.keystore')
     end
 
     it 'secure_settings works' do

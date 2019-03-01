@@ -11,6 +11,6 @@
 # If a command fails, exit immediately
 set -e
 
-curl -k -s -X PUT "<%= elasticsearch_url %>/_snapshot/<%= p('elasticsearch.snapshots.repository') %>" \
+curl -D /dev/stderr -k -s -X PUT "<%= elasticsearch_url %>/_snapshot/<%= p('elasticsearch.snapshots.repository') %>" \
   -X PUT -H "Content-Type: application/json" \
   -d '{"type": "<%= p('elasticsearch.snapshots.type') %>", "settings": <%= p('elasticsearch.snapshots.settings').to_json %>}'

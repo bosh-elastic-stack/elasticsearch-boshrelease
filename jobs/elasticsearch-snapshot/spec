@@ -1,0 +1,30 @@
+---
+name: elasticsearch-snapshot
+
+templates:
+  bin/run.sh: bin/run
+
+consumes:
+- name: elasticsearch
+  type: elasticsearch
+  optional: true
+
+properties:
+  elasticsearch.protocol:
+    description: "Protocl of elasticsearch master to send elasticsearch requests to (http or https)"
+    default: "http"
+  elasticsearch.prefer_bosh_link:
+    description: "Use bosh link to connect elasticsearch in prioriy to elasticsearch.host/port"
+    default: true
+  elasticsearch.host:
+    description: "IP address of elasticsearch master to send elasticsearch requests to"
+    default: "127.0.0.1"
+  elasticsearch.port:
+    description: "Port of elasticsearch master to send elasticsearch requests to"
+    default: "9200"
+  elasticsearch.snapshots.repository:
+    description: Repository name for snapshots
+  elasticsearch.snapshots.type:
+    description: Repository type for snapshots
+  elasticsearch.snapshots.settings:
+    description: Repository settings for snapshots

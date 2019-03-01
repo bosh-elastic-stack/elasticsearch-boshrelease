@@ -1,0 +1,41 @@
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch/plugins?/-
+  value: 
+    epository-s3: /var/vcap/packages/repository-s3/repository-s3.zip
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch/plugin_install_opts?
+  value: 
+  - --batch
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/-
+  value:
+    name: repository-s3
+    release: elasticsearch
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch/jvm_options?
+  value: 
+  - -Des.allow_insecure_settings=true
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/provides?
+  value:
+    elasticsearch:
+      as: elasticsearch-master
+- type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/-
+  value:
+    name: elasticsearch-snapshot
+    release: elasticsearch
+    lifecycle: errand
+    consumes:
+      elasticsearch:
+        from: elasticsearch-master
+    properties:
+      elasticsearch:
+        snapshots:
+          type: s3
+          repository: ((elasticsearch-snapshot.repository))
+          settings:
+            bucket: ((elasticsearch-snapshot.bucket))
+            endpoint: ((elasticsearch-snapshot.endpoint))
+            access_key:  ((elasticsearch-snapshot.access_key))
+            secret_key: ((elasticsearch-snapshot.secret_key))

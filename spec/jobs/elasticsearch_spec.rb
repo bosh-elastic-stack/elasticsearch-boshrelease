@@ -94,7 +94,7 @@ describe 'elasticsearch job' do
       expect(keystore_add).to starting_with('#!/bin/bash')
       expect(keystore_add).to include('echo "aaa" | elasticsearch-keystore add -xf  s3.client.default.access_key')
       expect(keystore_add).to include('elasticsearch-keystore remove s3.client.default.secret_key || true')
-      expect(keystore_add).to include('elasticsearch-keystore add-file --f gcs.client.default.credentials_file /tmp/credentials')
+      expect(keystore_add).to include('elasticsearch-keystore add-file -f gcs.client.default.credentials_file /tmp/credentials')
       expect(keystore_add).to ending_with('elasticsearch-keystore list || true')
     end
   end

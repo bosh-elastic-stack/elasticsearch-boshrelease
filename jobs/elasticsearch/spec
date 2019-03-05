@@ -63,7 +63,8 @@ properties:
     description: "Plugins to run elasticsearch with (array[] = { plugin-name: install-source }; e.g. [ { analysis-kuromoji: 'analysis-kuromoji' } ])"
     default: []
   elasticsearch.plugin_install_opts:
-    description: "Command line parameters for 'elasticsearch-plugin install'" (should be an array of options; e.g. ['--batch'])
+    description: "Command line parameters for 'elasticsearch-plugin install'"
+    example: ['--batch']
     default: []
   elasticsearch.health.disable_post_start:
     description: Allow node to run post-start script? (true / false)

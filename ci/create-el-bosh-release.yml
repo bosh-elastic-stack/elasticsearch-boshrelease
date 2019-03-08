@@ -1,0 +1,59 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: bosh/main-bosh-docker
+inputs:
+- name: gh-release
+outputs:
+- name: bosh-releases
+params:
+  VERSION_SUFFIX: 
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -e
+
+    tar xzf gh-release/source.tar.gz
+    VERSION=`cat gh-release/version`${VERSION_SUFFIX}
+    RELEASE_DIR=$(pwd)/bosh-releases
+    cd bosh-elastic-stack-elasticsearch-*
+    ES_VERSION=`grep ES_VERSION= add-blobs.sh | tr -d 'ES_VERSION='`
+    TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
+
+    rm -rf .final_builds
+    rm -rf releases
+    echo '{}' > config/blobs.yml
+
+    bosh int config/final.yml -o <(cat <<EOF
+    - type: replace
+      path: /blobstore/options
+      value:
+        blobstore_path: $(pwd)/blobs
+    - type: replace
+      path: /blobstore/provider
+      value: local
+    EOF) > final.yml
+    mv final.yml config/
+
+    sed -i -e 's/-oss//g' add-blobs.sh
+    ./add-blobs.sh
+
+    bosh create-release --name=elasticsearch --force --version=${VERSION} --final --tarball=${RELEASE_DIR}/${TARBALL}
+    SHA1=`sha1sum ${RELEASE_DIR}/${TARBALL} | awk '{print $1}'`
+    cat <<EOF
+    
+    #######################################################################################################
+    ####################### Ops File ######################################################################
+    #######################################################################################################
+
+    - type: replace
+      path: /release/name=elasticsearch
+      value:
+        name: elasticsearch
+        url: https://your-file-server.example.com/${TARBALL}
+        sha1: ${SHA1}
+        version: ${VERSION} 
+    EOF

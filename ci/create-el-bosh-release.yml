@@ -20,7 +20,6 @@ run:
     VERSION=`cat gh-release/version`${VERSION_SUFFIX}
     RELEASE_DIR=$(pwd)/bosh-releases
     cd bosh-elastic-stack-elasticsearch-*
-    ES_VERSION=`grep ES_VERSION= add-blobs.sh | tr -d 'ES_VERSION='`
     TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
 
     rm -rf .final_builds

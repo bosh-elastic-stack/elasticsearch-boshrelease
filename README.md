@@ -119,7 +119,6 @@ resources:
 
 jobs:
 - name: create-el-bosh-release
-  build_logs_to_retain: 3
   plan:
   - aggregate:
     - get: gh-release
@@ -153,7 +152,6 @@ resources:
 
 jobs:
 - name: create-el-bosh-release
-  build_logs_to_retain: 3
   plan:
   - aggregate:
     - get: gh-release

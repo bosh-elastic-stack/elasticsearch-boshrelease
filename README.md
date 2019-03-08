@@ -8,7 +8,9 @@ Since 0.17.0, elasticsearch bosh release comes with [Apache licensed distributio
 Please do not use previous versions.
 If you want to use X-Pack features, download [Elastic licensed distribution](https://www.elastic.co/jp/downloads/elasticsearch) and build the bosh release with it by yourself. You can use [a prepared concourse task](#build-your-own-bosh-release-with-x-pack-by-concourse). 
 
-### Create/update index templates
+### How to use errands
+
+#### Create/update index templates
 
 The errand job `elasticsearch-index-templates` will make a request to the `/_template/` API with a template name and a
 json body, which will be the index template to be created.
@@ -67,7 +69,7 @@ An example of an operation file that will create 2 different index templates (`c
 }' }]
 ```
 
-### Change dynamic properties
+#### Change dynamic properties
 
 If you want to change the cluster dynamic properties, you can do it with the `elasticsearch-dynamic-properties` errand job.
 This job will post a request to the `/_cluster/settings` ( [see more information about this here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html) ) and the body can be defined in the properties.

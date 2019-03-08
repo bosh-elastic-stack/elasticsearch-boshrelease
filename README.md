@@ -4,9 +4,9 @@ Use [elastic-stack-bosh-deployment](https://github.com/bosh-elastic-stack/elasti
 
 **ℹ️ Important ℹ️**
 
-Since 0.17.0, elasticsearch bosh release comes with [Apache License version](https://www.elastic.co/downloads/elasticsearch-oss).
+Since 0.17.0, elasticsearch bosh release comes with [Apache licensed distribution](https://www.elastic.co/downloads/elasticsearch-oss).
 Please do not use previous versions.
-If you want to use X-Pack features, download [Elastic License version](https://www.elastic.co/jp/downloads/elasticsearch) and build the bosh release with it by yourself. You can use [a prepared concourse task](#build-your-own-bosh-release-with-x-pack-by-concourse). 
+If you want to use X-Pack features, download [Elastic licensed distribution](https://www.elastic.co/jp/downloads/elasticsearch) and build the bosh release with it by yourself. You can use [a prepared concourse task](#build-your-own-bosh-release-with-x-pack-by-concourse). 
 
 ### Create/update index templates
 
@@ -92,8 +92,8 @@ Here's an example of a valid operation file:
 
 ### Build your own bosh release with X-Pack by Concourse
 
-elasticsearch boshrelease does not include X-Pack since it uses Apache License version.
-You can use [create-el-bosh-release.yml](ci/create-el-bosh-release.yml) to build your own bosh release with Elastic License version.
+elasticsearch boshrelease does not include X-Pack since it uses Apache licensed distribution.
+You can use [create-el-bosh-release.yml](ci/create-el-bosh-release.yml) to build your own bosh release with Elastic licensed distribution.
 
 Here is a sample pipeline:
 

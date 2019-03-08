@@ -50,7 +50,7 @@ run:
     #######################################################################################################
 
     - type: replace
-      path: /release/name=elasticsearch
+      path: /releases/name=elasticsearch
       value:
         name: elasticsearch
         url: https://your-file-server.example.com/${TARBALL}

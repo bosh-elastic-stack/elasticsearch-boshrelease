@@ -17,7 +17,7 @@ This job accepts an array of `template_name:template_body` tuples and will post 
 An example of an operation file that will create 2 different index templates (`custom_template_1` and
 `custom_template_2`) is here:
 
-```
+```yaml
 - type: replace
   path: /instance_groups/name=elasticsearch-master/jobs/-
   value:
@@ -67,13 +67,13 @@ An example of an operation file that will create 2 different index templates (`c
 }' }]
 ```
 
-## Change dynamic properties
+### Change dynamic properties
 
 If you want to change the cluster dynamic properties, you can do it with the `elasticsearch-dynamic-properties` errand job.
 This job will post a request to the `/_cluster/settings` ( [see more information about this here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html) ) and the body can be defined in the properties.
 
 Here's an example of a valid operation file:
-```
+```yaml
 - type: replace
   path: /instance_groups/name=elasticsearch-master/jobs/-
   value:

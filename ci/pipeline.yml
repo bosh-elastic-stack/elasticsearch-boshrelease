@@ -1,257 +1,4 @@
 ---
-resource_types:
-- name: dynamic-metalink
-  type: docker-image
-  source:
-    repository: dpb587/dynamic-metalink-resource
-resources:
-- name: repo
-  type: git
-  source:
-    uri: git@github.com:bosh-elastic-stack/elasticsearch-boshrelease.git
-    branch: master
-    private_key: ((github-private-key))
-    ignore_paths:
-    - ci/*
-    # - manifest/*
-    - README.md
-- name: repo-version
-  type: semver
-  source:
-    uri: git@github.com:bosh-elastic-stack/elasticsearch-boshrelease.git
-    branch: version
-    private_key: ((github-private-key))
-    file: version
-    driver: git
-- name: gh-release
-  type: github-release
-  source:
-    user: bosh-elastic-stack
-    repository: elasticsearch-boshrelease
-    access_token: ((github-access-token))
-- name: utils
-  type: git
-  source:
-    uri: https://github.com/making/ci-utils.git
-    branch: master
-- name: elasticsearch
-  type: dynamic-metalink
-  check_every: 30m
-  source:
-    version_check: |
-      curl -s https://www.elastic.co/downloads/past-releases \
-        | grep 'prod_array' \
-        | head -n 1 \
-        | sed -e 's/        var prod_array = //' -e 's/,$//g' \
-        | jq 'map(select(.name == "Elasticsearch")) | map(.version[])' | jq -r '.[]'
-    metalink_get: |
-      jq -n '
-        "elasticsearch-\(env.version).tar.gz" | {
-          "files": [
-            { "name": .,
-              "urls": [ { "url": "https://artifacts.elastic.co/downloads/elasticsearch/\(.)" } ] } ] }'
-
-jobs:
-- name: update-pr
-  serial: true
-  plan:
-  - aggregate:
-    - get: release
-      resource: elasticsearch
-      trigger: true
-      params:
-        skip_download: true
-    - get: repo
-    - get: utils
-  - task: update-elasticsearch
-    params:
-      GIT_EMAIL: ((git-email))
-      GIT_NAME: ((git-name))
-      GIT_SSH_KEY: ((github-private-key))
-      GITHUB_API_TOKEN: ((github-access-token))
-      S3_ACCESS_KEY_ID: ((s3-access-key-id))
-      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: bosh/main-bosh-docker
-      inputs:
-      - name: release
-      - name: repo
-      - name: utils
-      outputs:
-      - name: updated-repo
-      run:
-        path: bash
-        args:
-        - -c
-        - |
-          set -e
-          shopt -s dotglob
-          source utils/scripts/generate-pr.sh
-          CURRENT_VERSION=`grep ES_VERSION= repo/add-blobs.sh | tr -d 'ES_VERSION='`
-          NEW_VERSION=$(cat release/.resource/version)
-          
-          echo "Current: $CURRENT_VERSION"
-          echo "New    : $NEW_VERSION"
-          cd repo
-          sed -i.swp "s/$CURRENT_VERSION/$NEW_VERSION/g" `grep -riIl $CURRENT_VERSION packages/` add-blobs.sh
-          rm -f `find . -name '*.swp'`
-
-          ./add-blobs.sh
-          cat <<EOF > config/private.yml
-          ---
-          blobstore:
-            options:
-              access_key_id: ${S3_ACCESS_KEY_ID}
-              secret_access_key: ${S3_SECRET_ACCESS_KEY}
-          EOF
-          bosh upload-blobs
-          sed -i.swp "/$CURRENT_VERSION/,/sha/ d" config/blobs.yml
-          git diff | cat
-          cp -r ./* ../updated-repo
-          cd ../updated-repo
-          generate_pull_request "making-bot" "elasticsearch" "${NEW_VERSION}" "bosh-elastic-stack/elasticsearch-boshrelease" "master"
-
-- name: bosh-deploy-dev-in-exsiting-env
-  serial: true
-  plan:
-  - aggregate:
-    - get: repo
-      trigger: true
-  - task: bosh-create-release
-    params:
-      S3_ACCESS_KEY_ID: ((s3-access-key-id))
-      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
-    config:
-      <<: *BOSH_CREATE_RELEASE
-  - task: bosh-deploy
-    params:
-      RELEASE_NAME: elasticsearch
-      IS_DOCKER: false
-      <<: *BOSH
-    config:
-      <<: *BOSH_DEPLOY
-- name: ship-it
-  serial: true
-  plan:
-  - aggregate:
-    - get: repo
-    - get: repo-version
-  - task: create-release
-    params:
-      <<: *BOSH
-      GIT_EMAIL: ((git-email))
-      GIT_NAME: ((git-name))
-      S3_ACCESS_KEY_ID: ((s3-access-key-id))
-      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: bosh/main-bosh-docker
-      inputs:
-      - name: repo
-      - name: repo-version
-      outputs:
-      - name: releases
-      - name: updated-repo
-      run:
-        path: bash
-        args:
-        - -c
-        - |
-          set -e
-          cd repo
-          gem install bundler
-          bundle install
-          bundle exec rspec spec/jobs/*_spec.rb
-          shopt -s dotglob
-          cp -r ./* ../updated-repo
-          VERSION=`cat ../repo-version/number`
-          TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
-          cat <<EOF > config/private.yml
-          ---
-          blobstore:
-            options:
-              access_key_id: ${S3_ACCESS_KEY_ID}
-              secret_access_key: ${S3_SECRET_ACCESS_KEY}
-          EOF
-          bosh create-release --force --version=${VERSION} --final --tarball=../releases/${TARBALL}
-          SHA1=`sha1sum ../releases/${TARBALL} | awk '{print $1}'`
-          mkdir -p .sha1
-          echo ${SHA1} > .sha1/${VERSION}
-          cp -r ./* ../updated-repo
-          cd ../updated-repo
-          git config --global user.email "${GIT_EMAIL}"
-          git config --global user.name "${GIT_NAME}"
-          git add -A
-          git commit -m "Release ${VERSION}"
-          # Release Note
-          cat <<EOF > ../releases/note.md
-          ## Deployment
-          \`\`\` yaml
-          # manifest.yml
-          ---
-          name: elasticsearch
-          releases:
-          - name: elasticsearch
-            version: ${VERSION}
-            url: https://github.com/making/elasticsearch-boshrelease/releases/download/${VERSION}/${TARBALL}
-            sha1: ${SHA1}
-          \`\`\`
-          EOF
-  - put: repo
-    params:
-      repository: updated-repo
-      tag: repo-version/number
-  - put: gh-release
-    params:
-      name: repo-version/number
-      tag: repo-version/number
-      body: releases/note.md
-      globs:
-      - releases/*.tgz
-
-########################################
-
-- name: bump-to-next-patch-version
-  plan:
-  - aggregate:
-    - get: repo
-      trigger: true
-      passed:
-      - ship-it
-    - get: repo-version
-      params:
-        bump: patch
-  - put: repo-version
-    params:
-      file: repo-version/number
-
-- name: bump-to-next-minor-version
-  plan:
-  - aggregate:
-    - get: repo-version
-      params:
-        bump: minor
-  - put: repo-version
-    params:
-      file: repo-version/number
-
-- name: bump-to-next-majar-version
-  plan:
-  - aggregate:
-    - get: repo-version
-      params:
-        bump: majar
-  - put: repo-version
-    params:
-      file: repo-version/number
-
 params:
   bosh: &BOSH
     BOSH_CLIENT: ((bosh-client))
@@ -459,3 +206,294 @@ tasks:
 
         bosh -n delete-deployment -d ${RELEASE_NAME}-dev
         bosh -n clean-up --all
+
+resource_types:
+- name: dynamic-metalink
+  type: docker-image
+  source:
+    repository: dpb587/dynamic-metalink-resource
+resources:
+- name: repo
+  type: git
+  source:
+    uri: git@github.com:bosh-elastic-stack/elasticsearch-boshrelease.git
+    branch: master
+    private_key: ((github-private-key))
+    ignore_paths:
+    - ci/*
+    # - manifest/*
+    - README.md
+- name: repo-version
+  type: semver
+  source:
+    uri: git@github.com:bosh-elastic-stack/elasticsearch-boshrelease.git
+    branch: version
+    private_key: ((github-private-key))
+    file: version
+    driver: git
+- name: gh-release
+  type: github-release
+  source:
+    user: bosh-elastic-stack
+    repository: elasticsearch-boshrelease
+    access_token: ((github-access-token))
+- name: utils
+  type: git
+  source:
+    uri: https://github.com/making/ci-utils.git
+    branch: master
+- name: elasticsearch
+  type: dynamic-metalink
+  check_every: 30m
+  source:
+    version_check: |
+      curl -s https://www.elastic.co/downloads/past-releases \
+        | grep 'prod_array' \
+        | head -n 1 \
+        | sed -e 's/        var prod_array = //' -e 's/,$//g' \
+        | jq 'map(select(.name == "Elasticsearch")) | map(.version[])' | jq -r '.[]'
+    metalink_get: |
+      jq -n '
+        "elasticsearch-\(env.version).tar.gz" | {
+          "files": [
+            { "name": .,
+              "urls": [ { "url": "https://artifacts.elastic.co/downloads/elasticsearch/\(.)" } ] } ] }'
+
+jobs:
+- name: create-el-bosh-release
+  build_logs_to_retain: 3
+  plan:
+  - get: gh-release
+    trigger: true
+    params:
+      include_source_tarball: true
+  - get: repo
+  - task: create-release
+    params:
+      VERSION_SUFFIX: "_el"
+    file: repo/ci/create-el-bosh-release.yml
+  - task: upload-release
+    params:
+      BOSH_CLIENT: ((bosh-client))
+      BOSH_ENVIRONMENT: ((bosh-environment))
+      BOSH_CLIENT_SECRET: ((bosh-client-secret))
+      BOSH_CA_CERT: ((bosh-ca-cert))
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: bosh/main-bosh-docker
+      inputs:
+      - name: bosh-releases
+      outputs:
+      - name: bosh-releases
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -e
+          bosh upload-release bosh-releases/*.tgz
+          bosh delete-release -n elasticsearch
+
+- name: update-pr
+  serial: true
+  plan:
+  - aggregate:
+    - get: release
+      resource: elasticsearch
+      trigger: true
+      params:
+        skip_download: true
+    - get: repo
+    - get: utils
+  - task: update-elasticsearch
+    params:
+      GIT_EMAIL: ((git-email))
+      GIT_NAME: ((git-name))
+      GIT_SSH_KEY: ((github-private-key))
+      GITHUB_API_TOKEN: ((github-access-token))
+      S3_ACCESS_KEY_ID: ((s3-access-key-id))
+      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: bosh/main-bosh-docker
+      inputs:
+      - name: release
+      - name: repo
+      - name: utils
+      outputs:
+      - name: updated-repo
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -e
+          shopt -s dotglob
+          source utils/scripts/generate-pr.sh
+          CURRENT_VERSION=`grep ES_VERSION= repo/add-blobs.sh | tr -d 'ES_VERSION='`
+          NEW_VERSION=$(cat release/.resource/version)
+          
+          echo "Current: $CURRENT_VERSION"
+          echo "New    : $NEW_VERSION"
+          cd repo
+          sed -i.swp "s/$CURRENT_VERSION/$NEW_VERSION/g" `grep -riIl $CURRENT_VERSION packages/` add-blobs.sh
+          rm -f `find . -name '*.swp'`
+
+          ./add-blobs.sh
+          cat <<EOF > config/private.yml
+          ---
+          blobstore:
+            options:
+              access_key_id: ${S3_ACCESS_KEY_ID}
+              secret_access_key: ${S3_SECRET_ACCESS_KEY}
+          EOF
+          bosh upload-blobs
+          sed -i.swp "/$CURRENT_VERSION/,/sha/ d" config/blobs.yml
+          git diff | cat
+          cp -r ./* ../updated-repo
+          cd ../updated-repo
+          generate_pull_request "making-bot" "elasticsearch" "${NEW_VERSION}" "bosh-elastic-stack/elasticsearch-boshrelease" "master"
+
+- name: bosh-deploy-dev-in-exsiting-env
+  serial: true
+  plan:
+  - aggregate:
+    - get: repo
+      trigger: true
+  - task: bosh-create-release
+    params:
+      S3_ACCESS_KEY_ID: ((s3-access-key-id))
+      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
+    config:
+      <<: *BOSH_CREATE_RELEASE
+  - task: bosh-deploy
+    params:
+      RELEASE_NAME: elasticsearch
+      IS_DOCKER: false
+      <<: *BOSH
+    config:
+      <<: *BOSH_DEPLOY
+- name: ship-it
+  serial: true
+  plan:
+  - aggregate:
+    - get: repo
+    - get: repo-version
+  - task: create-release
+    params:
+      <<: *BOSH
+      GIT_EMAIL: ((git-email))
+      GIT_NAME: ((git-name))
+      S3_ACCESS_KEY_ID: ((s3-access-key-id))
+      S3_SECRET_ACCESS_KEY: ((s3-secret-access-key))
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: bosh/main-bosh-docker
+      inputs:
+      - name: repo
+      - name: repo-version
+      outputs:
+      - name: releases
+      - name: updated-repo
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -e
+          cd repo
+          gem install bundler
+          bundle install
+          bundle exec rspec spec/jobs/*_spec.rb
+          shopt -s dotglob
+          cp -r ./* ../updated-repo
+          VERSION=`cat ../repo-version/number`
+          TARBALL=elasticsearch-boshrelease-${VERSION}.tgz
+          cat <<EOF > config/private.yml
+          ---
+          blobstore:
+            options:
+              access_key_id: ${S3_ACCESS_KEY_ID}
+              secret_access_key: ${S3_SECRET_ACCESS_KEY}
+          EOF
+          bosh create-release --force --version=${VERSION} --final --tarball=../releases/${TARBALL}
+          SHA1=`sha1sum ../releases/${TARBALL} | awk '{print $1}'`
+          mkdir -p .sha1
+          echo ${SHA1} > .sha1/${VERSION}
+          cp -r ./* ../updated-repo
+          cd ../updated-repo
+          git config --global user.email "${GIT_EMAIL}"
+          git config --global user.name "${GIT_NAME}"
+          git add -A
+          git commit -m "Release ${VERSION}"
+          # Release Note
+          cat <<EOF > ../releases/note.md
+          ## Deployment
+          \`\`\` yaml
+          # manifest.yml
+          ---
+          name: elasticsearch
+          releases:
+          - name: elasticsearch
+            version: ${VERSION}
+            url: https://github.com/making/elasticsearch-boshrelease/releases/download/${VERSION}/${TARBALL}
+            sha1: ${SHA1}
+          \`\`\`
+          EOF
+  - put: repo
+    params:
+      repository: updated-repo
+      tag: repo-version/number
+  - put: gh-release
+    params:
+      name: repo-version/number
+      tag: repo-version/number
+      body: releases/note.md
+      globs:
+      - releases/*.tgz
+
+########################################
+
+- name: bump-to-next-patch-version
+  plan:
+  - aggregate:
+    - get: repo
+      trigger: true
+      passed:
+      - ship-it
+    - get: repo-version
+      params:
+        bump: patch
+  - put: repo-version
+    params:
+      file: repo-version/number
+
+- name: bump-to-next-minor-version
+  plan:
+  - aggregate:
+    - get: repo-version
+      params:
+        bump: minor
+  - put: repo-version
+    params:
+      file: repo-version/number
+
+- name: bump-to-next-majar-version
+  plan:
+  - aggregate:
+    - get: repo-version
+      params:
+        bump: majar
+  - put: repo-version
+    params:
+      file: repo-version/number
+

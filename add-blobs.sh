@@ -9,7 +9,7 @@ cd .downloads
 ES_VERSION=6.6.1
 
 if [ ! -f ${DIR}/blobs/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz ];then
-    curl -L -O -J https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
+    curl -L -J -o elasticsearch-${ES_VERSION}.tar.gz https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${ES_VERSION}.tar.gz
     bosh add-blob --dir=${DIR} elasticsearch-${ES_VERSION}.tar.gz elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
 fi
 

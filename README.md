@@ -32,41 +32,43 @@ An example of an operation file that will create 2 different index templates (`c
     properties: 
       elasticsearch:
         index:
-          template: [
-            { custom_template_1: '{
-  "index_patterns": ["te*"], 
-  "mappings": { 
-    "_doc": { 
-      "_source": { 
-        "enabled": false 
-      }, 
-      "properties": { 
-        "host_name": { 
-          "type": "keyword" 
-        }, 
-        "created_at": { 
-          "type": "date", 
-          "format": "EEE MMM dd HH:mm:ss Z YYYY" 
-        } 
-      } 
-    } 
-  } 
-}' }, 
-          { custom_template_2: '{
-  "index_patterns": ["bar*"], 
-  "mappings": { 
-    "_doc": { 
-      "_source": { 
-        "enabled": true 
-      }, 
-      "properties": { 
-        "host_name": { 
-          "type": "keyword" 
-        } 
-      } 
-    } 
-  } 
-}' }]
+          template:
+          - custom_template_1: |
+              {
+                "index_patterns": ["te*"], 
+                "mappings": { 
+                  "_doc": { 
+                    "_source": { 
+                      "enabled": false 
+                    }, 
+                    "properties": { 
+                      "host_name": { 
+                        "type": "keyword" 
+                      }, 
+                      "created_at": { 
+                        "type": "date", 
+                        "format": "EEE MMM dd HH:mm:ss Z YYYY" 
+                      } 
+                    } 
+                  } 
+                } 
+              }
+          - custom_template_2: |
+              {
+                "index_patterns": ["bar*"], 
+                "mappings": { 
+                  "_doc": { 
+                    "_source": { 
+                      "enabled": true 
+                    }, 
+                    "properties": { 
+                      "host_name": { 
+                        "type": "keyword" 
+                      } 
+                    } 
+                  } 
+                } 
+              }
 ```
 
 #### Change dynamic properties
@@ -85,11 +87,12 @@ Here's an example of a valid operation file:
     properties:
       elasticsearch:
         dynamic:
-          properties: '{
-            "persistent" : {
-        "indices.recovery.max_bytes_per_sec" : "72mb"
-    }
-}'
+          properties: |
+            {
+              "persistent" : {
+                "indices.recovery.max_bytes_per_sec" : "72mb"
+              }
+            }
 ```
 
 ### Build your own bosh release with X-Pack by Concourse

@@ -247,11 +247,9 @@ resources:
   check_every: 30m
   source:
     version_check: |
-      curl -s https://www.elastic.co/downloads/past-releases \
-        | grep 'prod_array' \
-        | head -n 1 \
-        | sed -e 's/        var prod_array = //' -e 's/,$//g' \
-        | jq 'map(select(.name == "Elasticsearch")) | map(.version[])' | jq -r '.[]'
+      curl -s curl https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html | \
+        grep 'docker pull docker.elastic.co' | \
+        awk -F ':' '{print $2}' | awk -F '</pre>' '{print $1}'
     metalink_get: |
       jq -n '
         "elasticsearch-\(env.version).tar.gz" | {

@@ -1,0 +1,72 @@
+name: elasticsearch
+version: 0.17.2
+commit_hash: b3d9036
+uncommitted_changes: false
+jobs:
+- name: analysis-kuromoji
+  version: 59d40f995f95e3eca5a37eaa2911da0951f5299a68c573ddf76e25f841f319c6
+  fingerprint: 59d40f995f95e3eca5a37eaa2911da0951f5299a68c573ddf76e25f841f319c6
+  sha1: sha256:6b37da3fd2d6b056902e194de5c0d86b7e948948b6abd43c1a7d1f395e94e8a5
+- name: elasticsearch
+  version: 318c13419837a74fee63235c5e1072fbe59e42f198a36bc4433b6caeab264521
+  fingerprint: 318c13419837a74fee63235c5e1072fbe59e42f198a36bc4433b6caeab264521
+  sha1: sha256:15d9180428399272e2aeb86631768abf58f237ffaf4b32f10cd866bc90a9f21f
+- name: elasticsearch-dynamic-properties
+  version: bf916f301a41d10bc14b6d4d6840b4203eacd79310cb10fca36b4dbbeea6dc1e
+  fingerprint: bf916f301a41d10bc14b6d4d6840b4203eacd79310cb10fca36b4dbbeea6dc1e
+  sha1: sha256:91240df98e7552e5f81d71e2b3513ffa312d97e5994bc681cd1c1b9a61bb49b1
+- name: elasticsearch-index-templates
+  version: 1cc1bb54ef022584d2eca81e14c0e3c9b1f94daa8818e321e9fc1fc06fffc148
+  fingerprint: 1cc1bb54ef022584d2eca81e14c0e3c9b1f94daa8818e321e9fc1fc06fffc148
+  sha1: sha256:7598f7df68ee8b18192cc6d9cd8e04e1a3cf50989689ff519e0e85873d7875cf
+- name: elasticsearch-snapshot
+  version: ca7aecb0769344a8fed566e45b3bf84d86b2ee38117f17789697966249572596
+  fingerprint: ca7aecb0769344a8fed566e45b3bf84d86b2ee38117f17789697966249572596
+  sha1: sha256:8aca5efcabae01a015da492e10dd2beeaa4502f71622bd1134dede5d82f64751
+- name: repository-azure
+  version: bc1da17e9c933f1f95dcd99d1ba5496a0dfdf9d7a6b7377ca51bda9b0f20008c
+  fingerprint: bc1da17e9c933f1f95dcd99d1ba5496a0dfdf9d7a6b7377ca51bda9b0f20008c
+  sha1: sha256:06cd26c82c369e583cc084ce9d15e1b7cba39b17632553b66a193600d36f6bd1
+- name: repository-gcs
+  version: 0b5f47581336ca00b87001e155626073e784e9d2f007fcb7b80fb9f494368398
+  fingerprint: 0b5f47581336ca00b87001e155626073e784e9d2f007fcb7b80fb9f494368398
+  sha1: sha256:5809af7e0c9cae51eefe2f609243a744275ea6f7db9091ad71ec8feb5ea2cd1d
+- name: repository-s3
+  version: 2777cac1604399672fca174ae44ba98a22b96b94a0cc14c1919d03a3f258bdd9
+  fingerprint: 2777cac1604399672fca174ae44ba98a22b96b94a0cc14c1919d03a3f258bdd9
+  sha1: sha256:df9a9fba3bea0215a282957e3d61eff6e2f187d3d55ec5300b5bea66745bf50d
+packages:
+- name: analysis-kuromoji
+  version: 20d75f278e17fcdfc9c24a7475872006634d2f4cc6544ebfaaada0ef45e15edb
+  fingerprint: 20d75f278e17fcdfc9c24a7475872006634d2f4cc6544ebfaaada0ef45e15edb
+  sha1: sha256:b554582d2b43b83364cd2f5c7f415e95e19c2c302cf9caf270d6611409c913a0
+  dependencies: []
+- name: elasticsearch
+  version: 13dba42e3b47fdfb4dda5b1234ef280fc7f464b6ad0b5d152ae2f685dab547ca
+  fingerprint: 13dba42e3b47fdfb4dda5b1234ef280fc7f464b6ad0b5d152ae2f685dab547ca
+  sha1: sha256:fda93747bf8c1874f2146d60cb16a37dbb13c55d901987fad5d0a9abce51bb79
+  dependencies: []
+- name: elasticsearch-index-templates
+  version: a12df48ea6f42617b66ff0f009ac777ad624b072187e53015ee09ef1b75c3fbd
+  fingerprint: a12df48ea6f42617b66ff0f009ac777ad624b072187e53015ee09ef1b75c3fbd
+  sha1: sha256:62bfc22a74414f44cf0884294d190d825f964c37e2c6fe2e1f5bfcb23a949753
+  dependencies: []
+- name: repository-azure
+  version: 026693ae2624544f4f946bbb8f9ab0188477696f1128b3ed7ff4435ea91f7636
+  fingerprint: 026693ae2624544f4f946bbb8f9ab0188477696f1128b3ed7ff4435ea91f7636
+  sha1: sha256:232653814d049924c28d0ecfccd47f73b109b87067ec260f48f632dfea38a5dc
+  dependencies: []
+- name: repository-gcs
+  version: b7c00820daef4ba77eb845c223c9177396c1681ae5a3f157435c832ba3e18ac3
+  fingerprint: b7c00820daef4ba77eb845c223c9177396c1681ae5a3f157435c832ba3e18ac3
+  sha1: sha256:dd23ef11bee3f2ecf04b1711c7771da3605588e0c7f7eb7391a9f2444008baa7
+  dependencies: []
+- name: repository-s3
+  version: 183adb1858d556531cce81890baaea2c9469496f081cd514a52f523da8e09dd1
+  fingerprint: 183adb1858d556531cce81890baaea2c9469496f081cd514a52f523da8e09dd1
+  sha1: sha256:85a1e54a13003ef9c72346064d23385f152453b421c445e45a2d194c20bb00a4
+  dependencies: []
+license:
+  version: 738d58f6841ba4cbc56eb2097cfdaf60cd6784ab98ddfc42ab34bf2fb33f2214
+  fingerprint: 738d58f6841ba4cbc56eb2097cfdaf60cd6784ab98ddfc42ab34bf2fb33f2214
+  sha1: sha256:7ee57b372e5339f9bcb24aa772772b4413a13235597e54cb439821b92bc7b8a8

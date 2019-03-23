@@ -53,6 +53,12 @@
         }
 
 - type: replace
+  path: /instance_groups/name=elasticsearch-master/jobs/name=elasticsearch/properties/elasticsearch/client?
+  value:
+    protocol: https
+    port: 443
+
+- type: replace
   path: /variables?/-
   value:
     name: nginx_ca

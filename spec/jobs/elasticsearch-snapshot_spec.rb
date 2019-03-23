@@ -33,7 +33,7 @@ describe 'elasticsearch-snapshot job' do
           }
         }
       }}, consumes: links).strip
-      expect(run).to include('curl -D /dev/stderr -k -s -X PUT "http://10.0.8.2:9200/_snapshot/foo?pretty"')
+      expect(run).to include('curl -D /dev/stderr -k -s -X PUT "http://:@10.0.8.2:9200/_snapshot/foo?pretty"')
       expect(run).to include('{"type": "s3", "settings": {"bucket":"my-s3-bucket","endpoint":"https://s3-ap-northeast-1.amazonaws.com","access_key":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","secret_key":"yyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"}}')
     end
 
@@ -49,7 +49,7 @@ describe 'elasticsearch-snapshot job' do
           }
         }
       }}, consumes: links).strip
-      expect(run).to include('curl -D /dev/stderr -k -s -X PUT "http://10.0.8.2:9200/_snapshot/foo?pretty"')
+      expect(run).to include('curl -D /dev/stderr -k -s -X PUT "http://:@10.0.8.2:9200/_snapshot/foo?pretty"')
       expect(run).to include('{"type": "gcs", "settings": {"bucket":"my-gcs-bucket","client":"foo","base_path":"dev"}}')
     end
   end

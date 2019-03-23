@@ -17,6 +17,12 @@ properties:
   elasticsearch.port:
     description: "Port of elasticsearch master to send elasticsearch requests to"
     default: "9200"
+  elasticsearch.username:
+    description: "Username of elasticsearch master to send elasticsearch requests to"
+    default: ""
+  elasticsearch.password:
+    description: "Password of elasticsearch master to send elasticsearch requests to"
+    default: ""
   elasticsearch.dynamic.properties:
     description: "This is the body of the API PUT request. It should be a valid JSON file. In case you want to see a valid example, check the readme file."
     default: ""

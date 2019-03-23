@@ -5,7 +5,7 @@
       if_link("elasticsearch") { |elasticsearch_link| elasticsearch_host = elasticsearch_link.instances[0].address }
   end
 
-  elasticsearch_url = p("elasticsearch.protocol") + '://' + elasticsearch_host + ':' + p("elasticsearch.port")
+  elasticsearch_url = p("elasticsearch.protocol") + '://' + p("elasticsearch.username") + ':' + p("elasticsearch.password") + '@' + elasticsearch_host + ':' + p("elasticsearch.port")
 %>
 
 # If a command fails, exit immediately

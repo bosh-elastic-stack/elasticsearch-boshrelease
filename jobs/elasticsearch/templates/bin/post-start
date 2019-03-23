@@ -12,19 +12,21 @@ export max_attempts=$((timeout / polling_frequency))
 export attempts=0
 out=$(mktemp health-XXXXXX)
 
+export url=<%= p("elasticsearch.client.protocol") %>://<%= p("elasticsearch.client.username") %>:<%= p("elasticsearch.client.password") %>@<%= p("elasticsearch.client.host") %>:<%= p("elasticsearch.client.port") %>
+
 while [[ "$max_attempts" -ge "$attempts" ]]; do
     set +e
     echo "attempt $attempts"
     <% if p("elasticsearch.node.allow_data") and not p("elasticsearch.node.allow_master") %>
-    curl -s -f --max-time $timeout -sw '\n%{http_code}' http://127.0.0.1:9200/_cluster/health > ${out}
+    curl -s -f --max-time $timeout -sw '\n%{http_code}' -k ${url}/_cluster/health > ${out}
     <% else %>
-    curl -s -f --max-time $timeout -sw '\n%{http_code}' http://127.0.0.1:9200/_cluster/health?local=true > ${out}
+    curl -s -f --max-time $timeout -sw '\n%{http_code}' -k ${url}/_cluster/health?local=true > ${out}
     <% end %>
     body=$(cat ${out} | head -n -1)
     status=$(cat ${out} | tail -n 1)
     echo "body: ${body}"
     echo "status: ${status}"
-    curl -X PUT -s -H 'Content-Type: application/json' http://127.0.0.1:9200/_cluster/settings \
+    curl -X PUT -s -H 'Content-Type: application/json' -k ${url}/_cluster/settings \
 	-d '{"persistent": {"cluster.routing.allocation.enable": "<%= p("elasticsearch.cluster.routing.allocation.enable_post_start") %>"}}'
     <% if p("elasticsearch.node.allow_data") and not p("elasticsearch.node.allow_master") %>
     if [ "${status}" = "200" ] && echo ${body} | grep '"status":"green"'; then

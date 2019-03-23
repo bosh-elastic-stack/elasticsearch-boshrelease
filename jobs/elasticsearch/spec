@@ -92,5 +92,20 @@ properties:
         - command: remove
           name: barbar
           value: fooo
+  elasticsearch.client.protocol:
+    description: "Protocol of elasticsearch to send requests to"
+    default: http
+  elasticsearch.client.host:
+    description: "Host of elasticsearch to send requests to"
+    default: localhost
+  elasticsearch.client.port:
+    description: "Port of elasticsearch to send requests to"
+    default: 9200
+  elasticsearch.client.username:
+    description: "Username of elasticsearch to send requests to"
+    default: ""
+  elasticsearch.client.password:
+    description: "Password of elasticsearch to send requests to"
+    default: ""
   elasticsearch.config_options:
     description: "Additional options to append to elasticsearch.yml (YAML format)."

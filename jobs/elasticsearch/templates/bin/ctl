@@ -38,11 +38,13 @@ case $1 in
     ulimit -u 4096
     sysctl -q -w vm.max_map_count=262144
 
+    (
     exec chpst -u $RUNAS:$RUNAS \
        /var/vcap/packages/elasticsearch/bin/elasticsearch \
-      -p $PIDFILE \
       <%= p("elasticsearch.exec.options", []).join(' ') %> \
       >>$LOG_DIR/elasticsearch.stdout.log 2>>$LOG_DIR/elasticsearch.stderr.log
+    ) &
+    echo $! > $PIDFILE
     ;;
 
   stop)

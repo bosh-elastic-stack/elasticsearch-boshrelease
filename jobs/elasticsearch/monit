@@ -1,5 +1,12 @@
 check process elasticsearch
   with pidfile /var/vcap/sys/run/elasticsearch/elasticsearch.pid
-  start program "/var/vcap/jobs/elasticsearch/bin/ctl start"
+  start program "/var/vcap/jobs/elasticsearch/bin/ctl start" 
   stop program "/var/vcap/jobs/elasticsearch/bin/ctl stop"
+<% if p("monit.enable_http_healthcheck") %>
+  if failed host 127.0.0.1 port 9200
+    send "GET /_cluster/health HTTP/1.1\r\nUser-Agent: monit-health-check\r\nHost: localhost\r\nConnection: close\r\n\r\n\"
+    expect "HTTP/[0-9\.]{3} 200 OK\r\n"
+    timeout 30 seconds
+    for 10 cycles then stop
+<% end %>
   group vcap

@@ -109,3 +109,6 @@ properties:
     default: ""
   elasticsearch.config_options:
     description: "Additional options to append to elasticsearch.yml (YAML format)."
+  monit.enable_http_healthcheck:
+    description: "Whether to enable http healthchek for monit (true / false). Disabled by default."
+    default: false

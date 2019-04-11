@@ -6,10 +6,10 @@ mkdir -p .downloads
 
 cd .downloads
 
-ES_VERSION=6.7.1
+ES_VERSION=7.0.0
 
 if [ ! -f ${DIR}/blobs/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz ];then
-    curl -L -J -o elasticsearch-${ES_VERSION}.tar.gz https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${ES_VERSION}.tar.gz
+    curl -L -J -o elasticsearch-${ES_VERSION}.tar.gz https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-${ES_VERSION}-linux-x86_64.tar.gz
     bosh add-blob --dir=${DIR} elasticsearch-${ES_VERSION}.tar.gz elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
 fi
 

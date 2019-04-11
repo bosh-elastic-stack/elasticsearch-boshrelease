@@ -26,15 +26,17 @@ while [[ "$max_attempts" -ge "$attempts" ]]; do
     status=$(cat ${out} | tail -n 1)
     echo "body: ${body}"
     echo "status: ${status}"
+    echo $body | grep '"status":"red"'
+    grep_red_status=$?
     curl -X PUT -s -H 'Content-Type: application/json' -k ${url}/_cluster/settings \
 	-d '{"persistent": {"cluster.routing.allocation.enable": "<%= p("elasticsearch.cluster.routing.allocation.enable_post_start") %>"}}'
     <% if p("elasticsearch.node.allow_data") and not p("elasticsearch.node.allow_master") %>
-    if [ "${status}" = "200" ] && echo ${body} | grep '"status":"green"'; then
+    if [ "${status}" = "200" ] && [ "${grep_red_status}" != "0" ] && echo ${body} | grep '"status":"green"'; then
         rm ${out}
         exit 0
     fi
     <% else %>
-    if [[ "${status}" = "200" ]]; then
+    if [ "${status}" = "200" ] && [ "${grep_red_status}" != "0" ]; then
         rm ${out}
         exit 0
     fi

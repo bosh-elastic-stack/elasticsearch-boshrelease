@@ -62,16 +62,16 @@
 #
 # --------------------------------- Discovery ----------------------------------
 #
-# Pass an initial list of hosts to perform discovery when new node is started:
+# Pass an initial list of hosts to perform discovery when this node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
-#discovery.zen.ping.unicast.hosts: ["host1", "host2"]
+#discovery.seed_hosts: ["host1", "host2"]
 #
-# Prevent the "split brain" by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
+# Bootstrap the cluster using an initial set of master-eligible nodes:
 #
-#discovery.zen.minimum_master_nodes: 
+#cluster.initial_master_nodes: ["node-1", "node-2"]
 #
-# For more information, consult the zen discovery module documentation.
+# For more information, consult the discovery and cluster formation module documentation.
 #
 # ---------------------------------- Gateway -----------------------------------
 #
@@ -108,14 +108,15 @@ cluster.name: <%= cluster_name %>
 
 <%
   master_hosts = nil
-  if_link("elasticsearch") { |elasticsearch_link| master_hosts = elasticsearch_link.instances.map {|e| e.address}.join(',') }
+  if_link("elasticsearch") { |elasticsearch_link| master_hosts = elasticsearch_link.instances.map {|e| e.address} }
   unless master_hosts
-    master_hosts = p("elasticsearch.master_hosts").join(',')
+    master_hosts = p("elasticsearch.master_hosts")
   end
 %>
-discovery.seed_hosts: <%= master_hosts %>
-cluster.initial_master_nodes: <%= master_hosts %>
-
+discovery.seed_hosts: <%= master_hosts.join(',') %>
+<% if p("elasticsearch.node.allow_master") && index == 0 %>
+cluster.initial_master_nodes: <%= master_hosts[0] %>
+<% end %>
 <% if_p('elasticsearch.config_options') do |config_options| %>
 <%= config_options.to_yaml.gsub(/---/, '') %>
 <% end %>

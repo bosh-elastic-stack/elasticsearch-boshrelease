@@ -28,8 +28,8 @@ describe 'elasticsearch job' do
       expect(config['node.ingest']).to eq(false)
       expect(config['node.attr.zone']).to eq('az1')
       expect(config['cluster.name']).to eq('test')
-      expect(config['discovery.zen.minimum_master_nodes']).to eq(1)
-      expect(config['discovery.zen.ping.unicast.hosts']).to eq('10.0.8.2')
+      expect(config['discovery.seed_hosts']).to eq('10.0.8.2')
+      expect(config['cluster.initial_master_nodes']).to eq('10.0.8.2')
     end
 
     it 'makes elasticsearch.node.allow_data false' do

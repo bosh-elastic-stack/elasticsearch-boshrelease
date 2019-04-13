@@ -61,6 +61,109 @@ describe 'elasticsearch job' do
       expect(config['xpack']['security']['enabled']).to eq(true)
       expect(config['xpack']['watcher']['enabled']).to eq(true)
     end
+
+    it 'configures multi-clusters successfully' do
+      config = YAML.safe_load(template.render({}, consumes: [
+        Bosh::Template::Test::Link.new(
+          name: 'elasticsearch',
+          instances: [Bosh::Template::Test::LinkInstance.new(address: '10.0.8.2'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.3'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.4')],
+          properties: {
+            'elasticsearch'=> {
+              'cluster_name' => 'test'
+            },
+          }
+        ),
+      ]))
+      expect(config['node.name']).to eq('me/0')
+      expect(config['node.master']).to eq(true)
+      expect(config['node.data']).to eq(true)
+      expect(config['node.ingest']).to eq(false)
+      expect(config['node.attr.zone']).to eq('az1')
+      expect(config['cluster.name']).to eq('test')
+      expect(config['discovery.seed_hosts']).to eq('10.0.8.2,10.0.8.3,10.0.8.4')
+      expect(config['cluster.initial_master_nodes']).to eq('10.0.8.2')
+    end
+
+    it 'configures multi-clusters on non-master successfully' do
+      config = YAML.safe_load(template.render({'elasticsearch'=> {
+              'node' => {
+                'allow_master' => false
+              }
+            }}, consumes: [
+        Bosh::Template::Test::Link.new(
+          name: 'elasticsearch',
+          instances: [Bosh::Template::Test::LinkInstance.new(address: '10.0.8.2'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.3'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.4')],
+          properties: {
+            'elasticsearch'=> {
+              'cluster_name' => 'test'
+            },
+          }
+        ),
+      ]))
+      expect(config['node.name']).to eq('me/0')
+      expect(config['node.master']).to eq(false)
+      expect(config['node.data']).to eq(true)
+      expect(config['node.ingest']).to eq(false)
+      expect(config['node.attr.zone']).to eq('az1')
+      expect(config['cluster.name']).to eq('test')
+      expect(config['discovery.seed_hosts']).to eq('10.0.8.2,10.0.8.3,10.0.8.4')
+      expect(config['cluster.initial_master_nodes']).to be_nil
+    end
+
+    it 'configures multi-clusters secondary master successfully' do
+      config = YAML.safe_load(template.render({}, 
+        spec: Bosh::Template::Test::LinkInstance.new(az: 'az1', address: '10.0.8.2', index: 1), 
+        consumes: [
+        Bosh::Template::Test::Link.new(
+          name: 'elasticsearch',
+          instances: [Bosh::Template::Test::LinkInstance.new(address: '10.0.8.2'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.3'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.4')],
+          properties: {
+            'elasticsearch'=> {
+              'cluster_name' => 'test'
+            },
+          }
+        ),
+      ]))
+      expect(config['node.master']).to eq(true)
+      expect(config['node.data']).to eq(true)
+      expect(config['node.ingest']).to eq(false)
+      expect(config['node.attr.zone']).to eq('az1')
+      expect(config['cluster.name']).to eq('test')
+      expect(config['discovery.seed_hosts']).to eq('10.0.8.2,10.0.8.3,10.0.8.4')
+      expect(config['cluster.initial_master_nodes']).to be_nil
+    end
+
+    it 'configures multi-clusters for migrate from 6 to 7 successfully' do
+      config = YAML.safe_load(template.render({'elasticsearch'=> {
+              'migrate_6_to_7' => true
+            }}, consumes: [
+        Bosh::Template::Test::Link.new(
+          name: 'elasticsearch',
+          instances: [Bosh::Template::Test::LinkInstance.new(address: '10.0.8.2'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.3'),
+            Bosh::Template::Test::LinkInstance.new(address: '10.0.8.4')],
+          properties: {
+            'elasticsearch'=> {
+              'cluster_name' => 'test',
+            },
+          }
+        ),
+      ]))
+      expect(config['node.name']).to eq('me/0')
+      expect(config['node.master']).to eq(true)
+      expect(config['node.data']).to eq(true)
+      expect(config['node.ingest']).to eq(false)
+      expect(config['node.attr.zone']).to eq('az1')
+      expect(config['cluster.name']).to eq('test')
+      expect(config['discovery.seed_hosts']).to eq('10.0.8.2,10.0.8.3,10.0.8.4')
+      expect(config['cluster.initial_master_nodes']).to eq('10.0.8.2,10.0.8.3,10.0.8.4')
+    end
   end
 
   describe 'keystore-add.sh' do

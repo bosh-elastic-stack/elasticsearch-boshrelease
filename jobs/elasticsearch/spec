@@ -106,6 +106,9 @@ properties:
     default: ""
   elasticsearch.config_options:
     description: "Additional options to append to elasticsearch.yml (YAML format)."
+  elasticsearch.migrate_6_to_7:
+    description: "Whether to migrate the Elasticsearch cluster from 6.7 to 7. (true / false). false by default"
+    default: false
   monit.enable_http_healthcheck:
     description: "Whether to enable http healthchek for monit (true / false). Disabled by default."
     default: false

@@ -56,9 +56,6 @@ properties:
   elasticsearch.health.interval:
     description: Post-start interval for node to join cluster (seconds)
     default: 15
-  elasticsearch.discovery.minimum_master_nodes:
-    description: The minimum number of master eligible nodes a node should "see" in order to operate within the cluster. Recommended to set it to a higher value than 1 when running more than 2 nodes in the cluster.
-    default: "auto"
   elasticsearch.plugins:
     description: "Plugins to run elasticsearch with (array[] = { plugin-name: install-source }; e.g. [ { analysis-kuromoji: 'analysis-kuromoji' } ])"
     default: []
@@ -109,6 +106,9 @@ properties:
     default: ""
   elasticsearch.config_options:
     description: "Additional options to append to elasticsearch.yml (YAML format)."
+  elasticsearch.migrate_6_to_7:
+    description: "Whether to migrate the Elasticsearch cluster from 6.7 to 7. (true / false). false by default"
+    default: false
   monit.enable_http_healthcheck:
     description: "Whether to enable http healthchek for monit (true / false). Disabled by default."
     default: false

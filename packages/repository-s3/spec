@@ -4,4 +4,4 @@ name: repository-s3
 dependencies: []
 
 files:
-- repository-s3/repository-s3-7.0.0.zip
+- repository-s3/repository-s3-7.0.1.zip

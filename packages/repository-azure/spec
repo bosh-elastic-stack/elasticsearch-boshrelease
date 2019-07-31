@@ -4,4 +4,4 @@ name: repository-azure
 dependencies: []
 
 files:
-- repository-azure/repository-azure-7.2.1.zip
+- repository-azure/repository-azure-7.3.0.zip

@@ -9,6 +9,7 @@ elasticsearch/elasticsearch-7.8.1.tar.gz:
 repository-azure/repository-azure-7.8.1.zip:
   size: 3464694
   object_id: 92c391af-614a-49ef-65e5-dbc57860731b
+  sha: sha256:48e746aedbb50c4a838e79d66d726c4507b2afb502caa174840d114457bfa0b0
 repository-gcs/repository-gcs-7.8.1.zip:
   size: 8529600
   object_id: 87698942-0dd5-4197-55bc-05a1babbba8d

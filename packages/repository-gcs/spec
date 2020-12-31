@@ -4,4 +4,4 @@ name: repository-gcs
 dependencies: []
 
 files:
-- repository-gcs/repository-gcs-7.6.2.zip
+- repository-gcs/repository-gcs-7.7.0.zip

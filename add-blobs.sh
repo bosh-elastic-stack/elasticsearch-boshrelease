@@ -5,7 +5,6 @@ DIR=`pwd`
 mkdir -p .downloads
 
 cd .downloads
-
 ES_VERSION=7.6.0
 
 if [ ! -f ${DIR}/blobs/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz ];then

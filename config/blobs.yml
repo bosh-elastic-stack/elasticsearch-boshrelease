@@ -1,20 +1,20 @@
-analysis-kuromoji/analysis-kuromoji-7.8.1.zip:
-  size: 4665070
-  object_id: 01e51a61-6d41-4a69-559e-c219b5a33e0d
-  sha: sha256:517589f68d3e90de6019e49ae48f7e59b4ec3967ceb3a2fe12d1b80b5d6880be
-elasticsearch/elasticsearch-7.8.1.tar.gz:
-  size: 75134201
-  object_id: 55e6575f-3dc0-4286-4768-330dd61bf345
-  sha: sha256:2d62ea8edad16730982877126a9406231be59251207b884b035c64176327bde0
-repository-azure/repository-azure-7.8.1.zip:
-  size: 3464694
-  object_id: 92c391af-614a-49ef-65e5-dbc57860731b
-  sha: sha256:48e746aedbb50c4a838e79d66d726c4507b2afb502caa174840d114457bfa0b0
-repository-gcs/repository-gcs-7.8.1.zip:
-  size: 8529600
-  object_id: 87698942-0dd5-4197-55bc-05a1babbba8d
-  sha: sha256:7a237ad688c69aa88c5b55a66cfcc3475c985a4d72c76cf0701e0817522faa14
-repository-s3/repository-s3-7.8.1.zip:
-  size: 4748322
-  object_id: 8f713418-c8ab-4f9a-7832-153cd0582219
-  sha: sha256:2b13a1a319898a7e3495d5db93f02600da203391010322b02c01171779c6cab9
+analysis-kuromoji/analysis-kuromoji-7.9.0.zip:
+  size: 4665195
+  object_id: 4aced9a4-1222-4a1b-65b9-7e08307c1458
+  sha: sha256:1259b64d349023204ac43beb55469bdfe0dc8ea3713b80132ebeaa1dbb55f215
+elasticsearch/elasticsearch-7.9.0.tar.gz:
+  size: 75601594
+  object_id: c7478b7e-1d6d-4e80-4032-affe13b296d4
+  sha: sha256:504fc31a832163ae08c0d26a50d9b1ba6df82c41d1a5db3aa262e0b7db5e913d
+repository-azure/repository-azure-7.9.0.zip:
+  size: 3467231
+  object_id: 7d55561a-05fa-4263-5d15-9047d2543c12
+  sha: sha256:9e1c8daa24ba4262ef542e763ff529c65fbb3c7290db2e7790c155184eecbb3c
+repository-gcs/repository-gcs-7.9.0.zip:
+  size: 8534973
+  object_id: 8ed01565-82cf-4384-4b23-b3cf9805bfbf
+  sha: sha256:aaf29d145c4634680b5bd6e9d05767897ccf8773bf143ea0273f4eb9487534d0
+repository-s3/repository-s3-7.9.0.zip:
+  size: 4750965
+  object_id: f0dd748a-f8ec-45e1-468e-6bebdf3b1cc9
+  sha: sha256:33c005b752ec47d23b093005d807debad71329255e6556b9a5f6b8ea0982b892

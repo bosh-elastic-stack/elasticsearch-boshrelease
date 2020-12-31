@@ -4,4 +4,4 @@ name: analysis-kuromoji
 dependencies: []
 
 files:
-- analysis-kuromoji/analysis-kuromoji-7.6.2.zip
+- analysis-kuromoji/analysis-kuromoji-7.7.0.zip

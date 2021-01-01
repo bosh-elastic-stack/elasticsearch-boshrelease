@@ -4,4 +4,4 @@ name: elasticsearch
 dependencies: []
 
 files:
-- elasticsearch/elasticsearch-7.9.1.tar.gz 
+- elasticsearch/elasticsearch-7.9.2.tar.gz 

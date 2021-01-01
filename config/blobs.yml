@@ -1,6 +1,7 @@
 analysis-kuromoji/analysis-kuromoji-7.9.3.zip:
   size: 4665159
   object_id: 85352b2e-9824-466f-6558-324e1678d8e2
+  sha: sha256:e25e5893d929695b8623e60597788746d28277e7941b642b779c2b88ecd67e6d
 elasticsearch/elasticsearch-7.9.3.tar.gz:
   size: 75609441
   object_id: f9848847-75e8-460b-6176-62eed93fa1e2

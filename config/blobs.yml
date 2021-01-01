@@ -1,6 +1,7 @@
 analysis-kuromoji/analysis-kuromoji-7.9.2.zip:
   size: 4665154
   object_id: 6ec35f2c-cf6a-4d27-4a3e-40997aeacd4c
+  sha: sha256:cd289e0275991416c5de0fb7ef692f73fb3d26f6bff85c639fdbab1c3351a05c
 elasticsearch/elasticsearch-7.9.2.tar.gz:
   size: 75602317
 repository-azure/repository-azure-7.9.2.zip:
